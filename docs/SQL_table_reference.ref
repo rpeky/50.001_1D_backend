@@ -2,38 +2,19 @@
 // Refer to https://docs.oracle.com/javase/tutorial/jdbc/basics/tables.html if needed
 // This document outlines the relational table fields and the creation of the tables in SQL notation
 
-//independent
-CREATE TABLE tags (
-id		BIGINT auto_increment,
-tag_name	varchar(2048),
-created_at	datetime,
-modified_at	datetime
-);
-
-// uses tag id from tags
-// uses itinerary_id from itineraries
-CREATE TABLE taggings (
-tagging_id	int auto_increment,
-tag_id		int,
-itinerary_id	int,
-created at	datetime,
-modified_at	datetime,
-FOREIGN KEY (tag_id) REFERENCES tags 
-		     ON DELETE CASCADE 
-		     ON UPDATE NO ACTION,
-FOREIGN KEY (itinerary_id) REFERENCES itineraries 
-			   ON DELETE CASCADE 
-			   ON UPDATE NO ACTION
-);
-
 // uses activity_id from activities
 CREATE TABLE itineraries (
 itinerary_id	int auto_increment,
-activity_id	int,
-location	varchar(512),
+title		varchar(45),
+user_id		int,
+description	varchar(MAX),
+price_range	double,
+duration	int,
+thumbnail	varchar(45),
+status		int,
 created_at	datetime,
 modified_at	datetime,
-FOREIGN KEY (activity_id) REFERENCES activities 
+FOREIGN KEY (user_id) REFERENCES activities 
 			  ON DELETE CASCADE
 			  ON UPDATE NO ACTION
 );
@@ -42,15 +23,17 @@ FOREIGN KEY (activity_id) REFERENCES activities
 // uses created_by from users
 CREATE TABLE activities (
 activity_id	int auto_increment,
+title		varchar(45),
+user_id		int,
 description	varchar(MAX),
-media_id	int,
-created_by	int,
+location	varchar(45),
+location_link	varchar(MAX),
+price		double,
+thumbnail	varchar(45),
+status		int, //confirm if independent status from table status
 created_at	datetime,
 modified_at	datetime
-FOREIGN KEY (media_id) REFERENCES //TBC
-			 ON DELETE CASCADE 
-			 ON UPDATE NO ACTION,
-FOREIGN KEY (created_by) REFERENCES users
+FOREIGN KEY (user_id) REFERENCES users
 			   ON DELETE CASCADE 
 			   ON UPDATE NO ACTION
 );
@@ -64,6 +47,7 @@ user_id		int,
 activity_id	int,
 itinerary_id	int,
 created_at	datetime,
+modified_at	datetime,
 FOREIGN KEY (user_id) REFERENCES users
 			   ON DELETE CASCADE 
 			   ON UPDATE NO ACTION,
@@ -77,35 +61,15 @@ FOREIGN KEY (itinerary_id) REFERENCES itineraries
 
 // uses activity_id from activities
 // uses itinerary_id from itineraries
-// uses rated_by from users 
-CREATE TABLE ratings (
-rating_id	int,
-activity_id	int,
-itinerary_id 	int,
-rated_by	int,
-created_at	datetime,
-modified_at	datetime,
-FOREIGN KEY (activity_id) REFERENCES activities 
-			  ON DELETE CASCADE
-			  ON UPDATE NO ACTION,
-FOREIGN KEY (itinerary_id) REFERENCES itineraries 
-			   ON DELETE CASCADE 
-			   ON UPDATE NO ACTION
-// should rated_by be users(users_id)?
-FOREIGN KEY (rated_by) REFERENCES users
-			   ON DELETE CASCADE 
-			   ON UPDATE NO ACTION
-);
-
-// uses activity_id from activities
-// uses itinerary_id from itineraries
 // uses created_by from users
 CREATE TABLE comments (
 comment_id	int auto_increment,
+comment		varchar(MAX),
 activity_id	int,
 itinerary_id	int,
-comment		varchar(MAX),
 created_by	int,
+created_at	datetime,
+modified_at	datetime,
 FOREIGN KEY (activity_id) REFERENCES activities 
 			  ON DELETE CASCADE
 			  ON UPDATE NO ACTION,
@@ -113,41 +77,24 @@ FOREIGN KEY (itinerary_id) REFERENCES itineraries
 			   ON DELETE CASCADE 
 			   ON UPDATE NO ACTION,
 // should created_by be users(user_id)
-FOREIGN KEY (created_by) REFERENCES users
+FOREIGN KEY (created_by) REFERENCES users(user_id)
 			   ON DELETE CASCADE 
 			   ON UPDATE NO ACTION
 );
 
-// uses created_by from users
-CREATE TABLE trips (
-trip_id		int,
-created_by	int,
-trip_name	varchar(2048),
-created_at	datetime,
-modified_at	datetime,
-// should created_by be users(user_id)
-FOREIGN KEY (created_by) REFERENCES users
-			   ON DELETE CASCADE 
-			   ON UPDATE NO ACTION
-);
-
+// uses created_by / user_id from users
 // uses itinerary_id from itineraries
-// uses trip_id from trips
-// uses status_id from status
-CREATE TABLE my_trips (
-my_trip_id	int auto_increment,
+CREATE TABLE trips (
+trip_id		int auto_increment,
 itinerary_id	int,
-trip_id		int,
-status_id	int,
+created_by	int,
 created_at	datetime,
 modified_at	datetime,
-FOREIGN KEY (itinerary_id) REFERENCES itinerary_id
+FOREIGN KEY (itinerary_id) REFERENCES itineraries 
 			   ON DELETE CASCADE 
 			   ON UPDATE NO ACTION,
-FOREIGN KEY (trip_id) REFERENCES trips
-			   ON DELETE CASCADE 
-			   ON UPDATE NO ACTION,
-FOREIGN KEY (status_id) REFERENCES status
+// should created_by be users(user_id)
+FOREIGN KEY (created_by) REFERENCES users(user_id)
 			   ON DELETE CASCADE 
 			   ON UPDATE NO ACTION
 );
@@ -155,18 +102,52 @@ FOREIGN KEY (status_id) REFERENCES status
 // independent
 CREATE TABLE status (
 status_id	int,
-status_name	varchar(128),
+status_name	varchar(45),
 created_at	datetime,
 modified_at	datetime
 );
 
 // independent
 CREATE TABLE users (
-user_id 	INTEGER auto_increment primary key,
-user_uuid	varchar(36),
-user_email	varchar(256),
-user_name	varchar(256),
+user_id 	int auto_increment primary key,
+user_uid	varchar(45),
+user_name	varchar(45),
+email		varchar(256),
+bio		varchar(256),
+status		int
 created_at	datetime,
 modified_at	datetime
 );
 
+//uses trip_id from trips
+//uses activity_id from activities
+CREATE TABLE timelines (
+timeline_id	int auto_increment,
+trip_id		int,
+day		int,
+activity_id	int,
+created_at	datetime,
+modified_at	datetime,
+FOREIGN KEY (trip_id) REFERENCES trips 
+			  ON DELETE CASCADE
+			  ON UPDATE NO ACTION,
+FOREIGN KEY (activity_id) REFERENCES activities 
+			  ON DELETE CASCADE
+			  ON UPDATE NO ACTION
+);
+
+//uses user_id from users
+//uses activity_id from activities
+CREATE TABLE bookmarks (
+bookmark_id	int auto_increment,
+user_id		int,
+activity_id	int,
+created_at	datetime,
+modified_at	datetime,
+FOREIGN KEY (user_id) REFERENCES users
+			   ON DELETE CASCADE 
+			   ON UPDATE NO ACTION,
+FOREIGN KEY (activity_id) REFERENCES activities 
+			  ON DELETE CASCADE
+			  ON UPDATE NO ACTION
+);
