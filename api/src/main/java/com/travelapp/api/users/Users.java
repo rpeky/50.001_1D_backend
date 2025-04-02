@@ -72,7 +72,7 @@ public class Users {
     private List<Bookmarks> bookmarks;
 
     //bi-directional mapping (inverse rel.) with likes
-    @OneToMany(mappedBy = "createdBy")
+    @OneToMany(mappedBy = "user")
     private List<Likes> likes;
 
 

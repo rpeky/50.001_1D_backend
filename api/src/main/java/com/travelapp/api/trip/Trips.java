@@ -13,13 +13,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "trip")
-public class Trip {
+@Table(name = "trips")
+public class Trips {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "trip_id", nullable = false)
-    private Integer tripId;
+    private Long tripId;
 
     // Optional relationship: a trip can be associated with an itinerary.
     @ManyToOne
@@ -33,20 +33,20 @@ public class Trip {
 
 
     //No-Arg Constructor
-    public Trip() {
+    public Trips() {
     }
     //Full-Arg Constructor
-    public Trip(Itineraries itinerary, Activities activity) {
+    public Trips(Itineraries itinerary, Activities activity) {
         this.itinerary = itinerary;
         this.activity = activity;
     }
 
 
     // Getters and setters
-    public Integer getTripId() {
+    public Long getTripId() {
         return tripId;
     }
-    public void setTripId(Integer tripId) {
+    public void setTripId(Long tripId) {
         this.tripId = tripId;
     }
 

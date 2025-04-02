@@ -4,7 +4,7 @@ import com.travelapp.api.bookmarks.Bookmarks;
 import com.travelapp.api.comments.Comments;
 import com.travelapp.api.likes.Likes;
 import com.travelapp.api.status.Status;
-import com.travelapp.api.trip.Trip;
+import com.travelapp.api.trip.Trips;
 import com.travelapp.api.users.Users;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -84,8 +84,8 @@ public class Activities {
     private Likes like;
 
     //bi-directional mapping (inverse rel.) with trip
-    @OneToMany(mappedBy = "activity", targetEntity = Trip.class)
-    private Trip trip;
+    @OneToMany(mappedBy = "activity", targetEntity = Trips.class)
+    private List<Trips> trips;
 
 
     //Constructor

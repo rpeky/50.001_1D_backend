@@ -3,7 +3,7 @@ package com.travelapp.api.itineraries;
 import com.travelapp.api.comments.Comments;
 import com.travelapp.api.likes.Likes;
 import com.travelapp.api.status.Status;
-import com.travelapp.api.trip.Trip;
+import com.travelapp.api.trip.Trips;
 import com.travelapp.api.users.Users;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -68,16 +68,16 @@ public class Itineraries {
 
     //Mapping
     //bi-directional mapping (inverse rel.) with comments
-    @OneToMany(mappedBy = "activity")
+    @OneToMany(mappedBy = "itinerary")
     private List<Comments> Comments;
 
     //bi-directional mapping (inverse rel.) with likes
-    @OneToOne(mappedBy = "activity", targetEntity = Likes.class)
+    @OneToOne(mappedBy = "itinerary", targetEntity = Likes.class)
     private Likes like;
 
     //bi-directional mapping (inverse rel.) with trip
-    @OneToMany(mappedBy = "activity", targetEntity = Trip.class)
-    private Trip trip;
+    @OneToMany(mappedBy = "itinerary", targetEntity = Trips.class)
+    private List<Trips> trips;
 
 
     //Constructor

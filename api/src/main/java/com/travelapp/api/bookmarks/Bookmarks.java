@@ -9,13 +9,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "bookmarks")
 public class Bookmarks {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +33,7 @@ public class Bookmarks {
 
     //owner of rel. with activities (fk)
     @OneToOne
-    @JoinColumn(name = "fk_activity_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "fk_activity_id", referencedColumnName = "activity_id", nullable = false)
     private Activities activity;
 
     @CreationTimestamp

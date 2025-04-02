@@ -10,14 +10,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
-
+@Entity
+@Table(name = "comments")
 public class Comments {
 
     @Id
@@ -36,7 +39,7 @@ public class Comments {
     //owner of rel. with itineraries (fk)
     @ManyToOne
     @JoinColumn(name = "fk_itinerary_id", referencedColumnName = "itinerary_id", nullable = true)
-    private Itineraries itineraries;
+    private Itineraries itinerary;
 
     //owner of rel. with users (fk)
     @ManyToOne
@@ -63,7 +66,7 @@ public class Comments {
         this.commentId = commentId;
         this.comment = comment;
         this.activity = activity;
-        this.itineraries = itineraries;
+        this.itinerary = itineraries;
         this.createdBy = createdBy;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
@@ -96,10 +99,10 @@ public class Comments {
 
 
     public Itineraries getItineraries() {
-        return itineraries;
+        return itinerary;
     }
     public void setItineraries(Itineraries itineraries) {
-        this.itineraries = itineraries;
+        this.itinerary = itineraries;
     }
 
 
