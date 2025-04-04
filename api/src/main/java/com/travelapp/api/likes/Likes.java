@@ -30,7 +30,7 @@ public class Likes {
 
     //owner of rel. with users (fk)
     @ManyToOne(optional = false)
-    @JoinColumn(name = "fk_user_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "fk_created_by", referencedColumnName = "user_id", nullable = false)
     private Users user;
 
     //owner of rel. with activity (fk)
@@ -39,7 +39,7 @@ public class Likes {
     private Activities activity;
 
     //owner of rel. with itinerary (fk)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fk_itinerary_id", referencedColumnName = "itinerary_id")
     private Itineraries itinerary;
 
@@ -118,3 +118,5 @@ public class Likes {
 
 
 }
+
+

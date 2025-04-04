@@ -32,7 +32,7 @@ public class Bookmarks {
     private Users createdBy;
 
     //owner of rel. with activities (fk)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fk_activity_id", referencedColumnName = "activity_id", nullable = false)
     private Activities activity;
 
@@ -100,5 +100,8 @@ public class Bookmarks {
         this.modifiedAt = modifiedAt;
     }
 
+    public String toString(){
+        return "bookmarks{"+"activity_id="+this.activity+"}";
+    }
 
 }

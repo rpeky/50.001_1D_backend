@@ -53,7 +53,7 @@ public class Itineraries {
     private String thumbnail;
 
     //owner of rel. with status (fk)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "status", referencedColumnName = "status_id", nullable = false)
     private Status status;
 
@@ -72,8 +72,8 @@ public class Itineraries {
     private List<Comments> Comments;
 
     //bi-directional mapping (inverse rel.) with likes
-    @OneToOne(mappedBy = "itinerary", targetEntity = Likes.class)
-    private Likes like;
+    @OneToMany(mappedBy = "itinerary", targetEntity = Likes.class)
+    private List<Likes> like;
 
     //bi-directional mapping (inverse rel.) with trip
     @OneToMany(mappedBy = "itinerary", targetEntity = Trips.class)

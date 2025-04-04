@@ -76,8 +76,8 @@ public class Activities {
     private List<Comments> comments;
 
     //bi-directional mapping (inverse rel.) with bookmarks
-    @OneToOne(mappedBy = "activity", targetEntity = Bookmarks.class)
-    private Bookmarks bookmark;
+    @OneToMany(mappedBy = "activity", targetEntity = Bookmarks.class)
+    private List<Bookmarks> bookmark;
 
     //bi-directional mapping (inverse rel.) with likes
     @OneToOne(mappedBy = "activity", targetEntity = Likes.class)

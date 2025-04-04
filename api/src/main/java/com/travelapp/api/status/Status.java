@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
 
 @Entity
 @Table(name = "status")
@@ -37,14 +39,14 @@ public class Status {
     @Column(name = "modified_at", nullable = true)
     private LocalDateTime modifiedAt;
 
-    @OneToOne(mappedBy = "status")
-    private Users user;
+    @OneToMany(mappedBy = "status")
+    private List<Users> user;
 
-    @OneToOne(mappedBy = "status")
-    private Activities activity;
+    @OneToMany(mappedBy = "status")
+    private List<Activities> activity;
 
-    @OneToOne(mappedBy = "status")
-    private Itineraries itineraries;
+    @OneToMany(mappedBy = "status")
+    private List<Itineraries> itineraries;
 
     //Constructors
     //No-Arg Constructor
