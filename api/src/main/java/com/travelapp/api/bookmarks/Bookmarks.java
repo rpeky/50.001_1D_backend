@@ -1,7 +1,7 @@
 package com.travelapp.api.bookmarks;
 
-import com.travelapp.api.activities.Activities;
-import com.travelapp.api.users.Users;
+import com.travelapp.api.activities.entity.Activities;
+import com.travelapp.api.users.entity.Users;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;

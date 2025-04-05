@@ -1,8 +1,8 @@
 package com.travelapp.api.likes;
 
-import com.travelapp.api.activities.Activities;
+import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.itineraries.Itineraries;
-import com.travelapp.api.users.Users;
+import com.travelapp.api.users.entity.Users;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -30,11 +30,11 @@ public class Likes {
 
     //owner of rel. with users (fk)
     @ManyToOne(optional = false)
-    @JoinColumn(name = "fk_user_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "fk_created_by", referencedColumnName = "user_id", nullable = false)
     private Users user;
 
     //owner of rel. with activity (fk)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fk_activity_id", referencedColumnName = "activity_id")
     private Activities activity;
 

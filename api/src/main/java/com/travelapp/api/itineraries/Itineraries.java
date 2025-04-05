@@ -2,9 +2,9 @@ package com.travelapp.api.itineraries;
 
 import com.travelapp.api.comments.Comments;
 import com.travelapp.api.likes.Likes;
-import com.travelapp.api.status.Status;
+import com.travelapp.api.status.entity.Status;
 import com.travelapp.api.trip.Trips;
-import com.travelapp.api.users.Users;
+import com.travelapp.api.users.entity.Users;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;

@@ -1,18 +1,17 @@
-package com.travelapp.api.activities;
+package com.travelapp.api.activities.entity;
 
 import com.travelapp.api.bookmarks.Bookmarks;
 import com.travelapp.api.comments.Comments;
+import com.travelapp.api.datedentity.DatedEntity;
 import com.travelapp.api.likes.Likes;
-import com.travelapp.api.status.Status;
+import com.travelapp.api.status.entity.Status;
 import com.travelapp.api.trip.Trips;
-import com.travelapp.api.users.Users;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import com.travelapp.api.users.entity.Users;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +25,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "activities")
-public class Activities {
+public class Activities extends DatedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,17 +56,9 @@ public class Activities {
     private String thumbnail;
 
     //owner of rel. with status (fk)
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "status", referencedColumnName = "status_id", nullable = false)
     private Status status;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "modified_at", nullable = true)
-    private LocalDateTime modifiedAt;
 
 
     //Mapping
@@ -80,8 +71,8 @@ public class Activities {
     private Bookmarks bookmark;
 
     //bi-directional mapping (inverse rel.) with likes
-    @OneToOne(mappedBy = "activity", targetEntity = Likes.class)
-    private Likes like;
+    @OneToMany(mappedBy = "activity", targetEntity = Likes.class)
+    private List<Likes> likes;
 
     //bi-directional mapping (inverse rel.) with trip
     @OneToMany(mappedBy = "activity", targetEntity = Trips.class)
@@ -106,8 +97,6 @@ public class Activities {
         this.price = price;
         this.thumbnail = thumbnail;
         this.status = status;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 
 
@@ -181,23 +170,11 @@ public class Activities {
     }
     public void setStatus(Status status) {
         this.status = status;
+        if (status != null && status.getActivity() != this) {
+            status.setActivity(this);
+        }
     }
 
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
-    }
-    public void setModifiedAt(LocalDateTime modifiedAt) {
-        this.modifiedAt = modifiedAt;
-    }
 
 }
 

@@ -1,8 +1,8 @@
 package com.travelapp.api.comments;
 
-import com.travelapp.api.activities.Activities;
+import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.itineraries.Itineraries;
-import com.travelapp.api.users.Users;
+import com.travelapp.api.users.entity.Users;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,7 +16,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity

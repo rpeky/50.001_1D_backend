@@ -1,16 +1,14 @@
-package com.travelapp.api.status;
+package com.travelapp.api.status.entity;
 
-import com.travelapp.api.activities.Activities;
+import com.travelapp.api.activities.entity.Activities;
+import com.travelapp.api.datedentity.DatedEntity;
+import com.travelapp.api.datedentitylistener.DatedEntityListener;
 import com.travelapp.api.itineraries.Itineraries;
-import com.travelapp.api.users.Users;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
+import com.travelapp.api.users.entity.Users;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,7 +17,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "status")
-public class Status {
+@EntityListeners(DatedEntityListener.class)     //Optional but not necessary
+public class Status extends DatedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,14 +28,8 @@ public class Status {
     @Column(name = "status_name", nullable = false)
     private String statusName;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "modified_at", nullable = true)
-    private LocalDateTime modifiedAt;
-
+    //Mapping
     @OneToOne(mappedBy = "status")
     private Users user;
 
@@ -44,19 +37,18 @@ public class Status {
     private Activities activity;
 
     @OneToOne(mappedBy = "status")
-    private Itineraries itineraries;
+    private Itineraries itinerary;
+
 
     //Constructors
-    //No-Arg Constructor
+    //No-Arg Constructors
     public Status() {
     }
-    //Full-Arg Constructor
-    public Status(Long statusId, String statusName,
-                  LocalDateTime createdAt, LocalDateTime modifiedAt) {
+
+    //Full-Arg Constructors
+    public Status(Long statusId, String statusName) {
         this.statusId = statusId;
         this.statusName = statusName;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 
     //Getters and Setters
@@ -67,7 +59,6 @@ public class Status {
         this.statusId = statusId;
     }
 
-
     public String getStatusName() {
         return statusName;
     }
@@ -75,21 +66,18 @@ public class Status {
         this.statusName = statusName;
     }
 
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public Users getUser() {
+        return user;
     }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
-    }
-    public void setModifiedAt(LocalDateTime modifiedAt) {
-        this.modifiedAt = modifiedAt;
+    public void setUser(Users user) {
+        this.user = user;
     }
 
+    public Activities getActivity() {
+        return activity;
+    }
+    public void setActivity(Activities activity) {
+        this.activity = activity;
+    }
 
 }

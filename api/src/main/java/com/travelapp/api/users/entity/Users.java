@@ -1,31 +1,30 @@
-package com.travelapp.api.users;
+package com.travelapp.api.users.entity;
 
-import com.travelapp.api.activities.Activities;
+import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.bookmarks.Bookmarks;
 import com.travelapp.api.comments.Comments;
+import com.travelapp.api.datedentity.DatedEntity;
 import com.travelapp.api.itineraries.Itineraries;
 import com.travelapp.api.likes.Likes;
-import com.travelapp.api.status.Status;
-
-import org.hibernate.annotations.CreationTimestamp;
+import com.travelapp.api.status.entity.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class Users {
+public class Users extends DatedEntity {
 
     @Id
     @Column(name = "user_id")
@@ -33,7 +32,7 @@ public class Users {
     private Long userId;
 
     @Column(name = "user_uid", nullable = false, unique = true)
-    private String userUId;
+    private String userUid;
 
     @Column(name = "user_name", nullable = false, unique = true)
     private String userName;
@@ -45,13 +44,9 @@ public class Users {
     private String bio;
 
     //owner of rel. with status (fk)
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "status", referencedColumnName = "status_id", nullable = false)
     private Status status;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
 
 
     //Mapping
@@ -82,16 +77,15 @@ public class Users {
     public Users() {
     }
     //Full-Arg Constructor
-    public Users(Long userId, String userUId, String userName,
+    public Users(Long userId, String userUid, String userName,
                  String email, String bio, Status status,
                  LocalDateTime createdAt) {
         this.userId = userId;
-        this.userUId = userUId;
+        this.userUid = userUid;
         this.userName = userName;
         this.email = email;
         this.bio = bio;
         this.status = status;
-        this.createdAt = createdAt;
     }
 
 
@@ -104,11 +98,11 @@ public class Users {
     }
 
 
-    public String getUserUId() {
-        return userUId;
+    public String getUserUid() {
+        return userUid;
     }
-    public void setUserUId(String userUId) {
-        this.userUId = userUId;
+    public void setUserUid(String userUid) {
+        this.userUid = userUid;
     }
 
 
@@ -141,14 +135,9 @@ public class Users {
     }
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+        if (status != null && status.getUser() != this) {
+            status.setUser(this);
+        }
     }
 
 
