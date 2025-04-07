@@ -1,5 +1,3 @@
-package com.travelapp.api.comments;
-
 import com.travelapp.api.activities.Activities;
 import com.travelapp.api.itineraries.Itineraries;
 import com.travelapp.api.users.Users;
