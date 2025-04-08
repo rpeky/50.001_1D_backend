@@ -1,6 +1,6 @@
 package com.travelapp.api.trip;
 
-import com.travelapp.api.activities.Activities;
+import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.itineraries.Itineraries;
 
 import jakarta.persistence.Column;

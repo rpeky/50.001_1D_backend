@@ -1,17 +1,17 @@
-package com.travelapp.api.itineraries;
+package com.travelapp.api.activities.entity;
 
+import com.travelapp.api.bookmarks.entity.Bookmarks;
 import com.travelapp.api.comments.entity.Comments;
+import com.travelapp.api.datedentity.DatedEntity;
 import com.travelapp.api.likes.entity.Likes;
 import com.travelapp.api.status.entity.Status;
 import com.travelapp.api.trip.Trips;
 import com.travelapp.api.users.entity.Users;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,13 +24,13 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "itineraries")
-public class Itineraries {
+@Table(name = "activities")
+public class Activities extends DatedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "itinerary_id", nullable = false)
-    private Long itineraryId;
+    @Column(name = "activity_id", nullable = false)
+    private Long activityId;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -43,71 +43,69 @@ public class Itineraries {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "price_range")
-    private Double priceRange;
+    @Column(name = "location")
+    private String location;
 
-    @Column(name = "duration")
-    private Long duration;
+    @Column(name = "location_link")
+    private String locationLink;
+
+    @Column(name = "price")
+    private Double price;
 
     @Column(name = "thumbnail")
     private String thumbnail;
 
     //owner of rel. with status (fk)
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "status", referencedColumnName = "status_id", nullable = false)
     private Status status;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "modified_at", nullable = true)
-    private LocalDateTime modifiedAt;
 
 
     //Mapping
     //bi-directional mapping (inverse rel.) with comments
-    @OneToMany(mappedBy = "itinerary")
-    private List<Comments> Comments;
+    @OneToMany(mappedBy = "activity", targetEntity = Comments.class)
+    private List<Comments> comments;
+
+    //bi-directional mapping (inverse rel.) with bookmarks
+    @OneToMany(mappedBy = "activity", targetEntity = Bookmarks.class)
+    private List<Bookmarks> bookmark;
 
     //bi-directional mapping (inverse rel.) with likes
-    @OneToOne(mappedBy = "itinerary", targetEntity = Likes.class)
-    private Likes like;
+    @OneToMany(mappedBy = "activity", targetEntity = Likes.class)
+    private List<Likes> likes;
 
     //bi-directional mapping (inverse rel.) with trip
-    @OneToMany(mappedBy = "itinerary", targetEntity = Trips.class)
+    @OneToMany(mappedBy = "activity", targetEntity = Trips.class)
     private List<Trips> trips;
 
 
     //Constructor
     //No-Arg Constructor
-    public Itineraries() {
+    public Activities() {
     }
     //Full-Arg Constructor
-    public Itineraries(Long itineraryId, String title, Users createdBy,
-                       String description, Double priceRange, Long duration,
-                       String thumbnail, Status status, LocalDateTime createdAt,
-                       LocalDateTime modifiedAt) {
-        this.itineraryId = itineraryId;
+    public Activities(Long activityId, String title, Users createdBy,
+                      String description, String location, String locationLink,
+                      Double price, String thumbnail, Status status,
+                      LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        this.activityId = activityId;
         this.title = title;
         this.createdBy = createdBy;
         this.description = description;
-        this.priceRange = priceRange;
-        this.duration = duration;
+        this.location = location;
+        this.locationLink = locationLink;
+        this.price = price;
         this.thumbnail = thumbnail;
         this.status = status;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 
 
-    //Getters and Setter
-    public Long getItineraryId() {
-        return itineraryId;
+    //Getters and Setters
+    public Long getActivityId() {
+        return activityId;
     }
-    public void setItineraryId(Long itineraryId) {
-        this.itineraryId = itineraryId;
+    public void setActivityId(Long activityID) {
+        this.activityId = activityID;
     }
 
 
@@ -135,19 +133,27 @@ public class Itineraries {
     }
 
 
-    public Double getPriceRange() {
-        return priceRange;
+    public String getLocation() {
+        return location;
     }
-    public void setPriceRange(Double priceRange) {
-        this.priceRange = priceRange;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
 
-    public Long getDuration() {
-        return duration;
+    public String getLocationLink() {
+        return locationLink;
     }
-    public void setDuration(Long duration) {
-        this.duration = duration;
+    public void setLocationLink(String locationLink) {
+        this.locationLink = locationLink;
+    }
+
+
+    public Double getPrice() {
+        return price;
+    }
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
 
@@ -164,23 +170,12 @@ public class Itineraries {
     }
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
-    }
-    public void setModifiedAt(LocalDateTime modifiedAt) {
-        this.modifiedAt = modifiedAt;
+        if (status != null && status.getActivity() != this) {
+            status.setActivity(this);
+        }
     }
 
 
 }
+
+
