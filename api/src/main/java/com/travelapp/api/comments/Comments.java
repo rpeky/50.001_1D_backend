@@ -1,7 +1,7 @@
 package com.travelapp.api.comments;
 
 import com.travelapp.api.activities.entity.Activities;
-import com.travelapp.api.itineraries.Itineraries;
+import com.travelapp.api.itineraries.entity.Itineraries;
 import com.travelapp.api.users.entity.Users;
 
 import org.hibernate.annotations.CreationTimestamp;

@@ -1,9 +1,9 @@
 package com.travelapp.api.status.entity;
 
 import com.travelapp.api.activities.entity.Activities;
-import com.travelapp.api.datedentity.DatedEntity;
-import com.travelapp.api.datedentitylistener.DatedEntityListener;
-import com.travelapp.api.itineraries.Itineraries;
+import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
+import com.travelapp.api.globalnonsense.datedentity.datedentitylistener.DatedEntityListener;
+import com.travelapp.api.itineraries.entity.Itineraries;
 import com.travelapp.api.users.entity.Users;
 
 import jakarta.persistence.Column;
@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "status")
-@EntityListeners(DatedEntityListener.class)     //Optional but not necessary
+@EntityListeners(DatedEntityListener.class)
 public class Status extends DatedEntity {
 
     @Id
@@ -80,4 +80,10 @@ public class Status extends DatedEntity {
         this.activity = activity;
     }
 
+    public Itineraries getItinerary() {
+        return itinerary;
+    }
+    public void setItinerary(Itineraries itinerary) {
+        this.itinerary = itinerary;
+    }
 }

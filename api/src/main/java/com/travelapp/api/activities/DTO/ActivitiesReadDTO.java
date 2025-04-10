@@ -1,16 +1,22 @@
 package com.travelapp.api.activities.DTO;
 
-import com.travelapp.api.users.DTO.UserActivityReadDTO;
+import com.travelapp.api.activities.activitymedia.DTO.MediaReadDTO;
+import com.travelapp.api.status.DTO.external.StatusReadDTO;
+import com.travelapp.api.users.DTO.other.UserOtherReadDTO;
+
+import java.util.List;
 
 public class ActivitiesReadDTO {
     private Long activityId;
     private String title;
-    private UserActivityReadDTO createdBy;
+    private UserOtherReadDTO createdBy;
     private String description;
     private String location;
     private String locationLink;
     private Double price;
     private String thumbnail;
+    private List<MediaReadDTO> medias;
+    private StatusReadDTO status;
 
     public Long getActivityId() {
         return this.activityId;
@@ -26,10 +32,10 @@ public class ActivitiesReadDTO {
         this.title = title;
     }
 
-    public UserActivityReadDTO getCreatedBy() {
+    public UserOtherReadDTO getCreatedBy() {
         return createdBy;
     }
-    public void setCreatedBy(UserActivityReadDTO createdBy) {
+    public void setCreatedBy(UserOtherReadDTO createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -68,4 +74,17 @@ public class ActivitiesReadDTO {
         this.thumbnail = thumbnail;
     }
 
+    public List<MediaReadDTO> getMedias() {
+        return medias;
+    }
+    public void setMedias(List<MediaReadDTO> medias) {
+        this.medias = medias;
+    }
+
+    public StatusReadDTO getStatus() {
+        return status;
+    }
+    public void setStatus(StatusReadDTO status) {
+        this.status = status;
+    }
 }

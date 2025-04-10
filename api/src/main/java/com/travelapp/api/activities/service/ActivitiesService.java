@@ -11,8 +11,6 @@ public interface ActivitiesService {
     ActivitiesReadDTO updateActivity(ActivitiesUpdateDTO activitiesUpdateDTO);
     ActivitiesReadDTO getActivity(Long activityId);
     List<ActivitiesReadDTO> getAllUserActivities(String userUid);
-    ActivitiesReadDTO getUserActivity(String userUid, Long activityId);
-    void deleteActivity(Long activityId);
     void deleteUserActivity(String userUid, Long activityId);
 
 

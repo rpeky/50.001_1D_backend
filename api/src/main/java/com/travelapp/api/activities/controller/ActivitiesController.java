@@ -5,8 +5,8 @@ import com.travelapp.api.activities.DTO.ActivitiesCreateDTO;
 import com.travelapp.api.activities.DTO.ActivitiesReadDTO;
 import com.travelapp.api.activities.DTO.ActivitiesUpdateDTO;
 import com.travelapp.api.activities.service.ActivitiesServiceImpl;
-import com.travelapp.api.responserequestwrappers.ApiRequest;
-import com.travelapp.api.responserequestwrappers.ApiResponse;
+import com.travelapp.api.globalnonsense.responserequestwrappers.ApiRequest;
+import com.travelapp.api.globalnonsense.responserequestwrappers.ApiResponse;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,26 +63,13 @@ public class ActivitiesController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userUid}/all")
+    @GetMapping("/user/{userUid}")
     public ResponseEntity<ApiResponse<List<ActivitiesReadDTO>>> getAllUserActivity(@PathVariable String userUid) {
         List<ActivitiesReadDTO> activitiesToShow = activitiesService.getAllUserActivities(userUid);
         ApiResponse<List<ActivitiesReadDTO>> response = new ApiResponse<>(activitiesToShow);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userUid}/{activityId}")
-    public ResponseEntity<ApiResponse<ActivitiesReadDTO>> getSpecificUserActivity
-            (@PathVariable String userUid, @PathVariable Long activityId) {
-        ActivitiesReadDTO activitiesToShow = activitiesService.getUserActivity(userUid, activityId);
-        ApiResponse<ActivitiesReadDTO> response = new ApiResponse<>(activitiesToShow);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{activityId}")
-    public ResponseEntity<ApiResponse<Void>> deleteActivity (@PathVariable Long activityId) {
-        activitiesService.deleteActivity(activityId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 
     @DeleteMapping("/user/{userUid}/{activityId}")
     public ResponseEntity<ApiResponse<Void>> deleteSpecificUserActivity (@PathVariable String userUid, @PathVariable Long activityId) {

@@ -1,9 +1,10 @@
 package com.travelapp.api.users.controller;
 
-import com.travelapp.api.responserequestwrappers.ApiRequest;
-import com.travelapp.api.responserequestwrappers.ApiResponse;
+import com.travelapp.api.globalnonsense.responserequestwrappers.ApiRequest;
+import com.travelapp.api.globalnonsense.responserequestwrappers.ApiResponse;
 import com.travelapp.api.users.DTO.UsersCreateDTO;
-import com.travelapp.api.users.DTO.UsersReadDTO;
+import com.travelapp.api.users.DTO.UsersReadElseDTO;
+import com.travelapp.api.users.DTO.UsersReadSelfDTO;
 import com.travelapp.api.users.DTO.UsersUpdateDTO;
 import com.travelapp.api.users.service.UsersServiceImpl;
 
@@ -19,32 +20,37 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import jakarta.persistence.EntityNotFoundException;
-
 @Controller
 @RequestMapping("/users")
 public class UsersController {
     @Autowired
     private UsersServiceImpl usersService;
 
+    @GetMapping("/me/{userUid}")
+    public ResponseEntity<ApiResponse<UsersReadSelfDTO>> getUserSelfByUid(@PathVariable String userUid) {
+        UsersReadSelfDTO userToShow = usersService.getUserSelf(userUid);
+        ApiResponse<UsersReadSelfDTO> response = new ApiResponse<>(userToShow);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @GetMapping("/{userUid}")
-    public ResponseEntity<ApiResponse<UsersReadDTO>> getUserByUid(@PathVariable String userUid) {
-        UsersReadDTO userToShow = usersService.getUser(userUid);
-        ApiResponse<UsersReadDTO> response = new ApiResponse<>(userToShow);
+    public ResponseEntity<ApiResponse<UsersReadElseDTO>> getUserOtherByUid(@PathVariable String userUid) {
+        UsersReadElseDTO userToShow = usersService.getUserOther(userUid);
+        ApiResponse<UsersReadElseDTO> response = new ApiResponse<>(userToShow);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<UsersReadDTO>> createUser(@RequestBody ApiRequest<UsersCreateDTO> request) {
-        UsersReadDTO userCreated = usersService.createUser(request.getData());
-        ApiResponse<UsersReadDTO> response = new ApiResponse<>(userCreated);
+    public ResponseEntity<ApiResponse<UsersReadSelfDTO>> createUser(@RequestBody ApiRequest<UsersCreateDTO> request) {
+        UsersReadSelfDTO userCreated = usersService.createUser(request.getData());
+        ApiResponse<UsersReadSelfDTO> response = new ApiResponse<>(userCreated);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<ApiResponse<UsersReadDTO>> updateUser(@RequestBody ApiRequest<UsersUpdateDTO> request) {
-        UsersReadDTO updatedUser = usersService.updateUser(request.getData());
-        ApiResponse<UsersReadDTO> response = new ApiResponse<>(updatedUser);
+    public ResponseEntity<ApiResponse<UsersReadSelfDTO>> updateUser(@RequestBody ApiRequest<UsersUpdateDTO> request) {
+        UsersReadSelfDTO updatedUser = usersService.updateUser(request.getData());
+        ApiResponse<UsersReadSelfDTO> response = new ApiResponse<>(updatedUser);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

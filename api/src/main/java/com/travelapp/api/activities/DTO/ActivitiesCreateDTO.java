@@ -1,16 +1,20 @@
 package com.travelapp.api.activities.DTO;
 
+import com.travelapp.api.activities.activitymedia.DTO.MediaCreateDTO;
 import com.travelapp.api.status.DTO.external.StatusCreateDTO;
-import com.travelapp.api.users.DTO.UserActivityCreateDTO;
+import com.travelapp.api.users.DTO.other.UserOtherCreateDTO;
+
+import java.util.List;
 
 public class ActivitiesCreateDTO {
     private String title;
-    private UserActivityCreateDTO createdBy;
+    private UserOtherCreateDTO createdBy;
     private String description;
     private String location;
     private String locationLink;
     private Double price;
     private String thumbnail;
+    private List<MediaCreateDTO> medias;
     private StatusCreateDTO status;
 
     public String getTitle() {
@@ -20,10 +24,10 @@ public class ActivitiesCreateDTO {
         this.title = title;
     }
 
-    public UserActivityCreateDTO getCreatedBy() {
+    public UserOtherCreateDTO getCreatedBy() {
         return createdBy;
     }
-    public void setCreatedBy(UserActivityCreateDTO createdBy) {
+    public void setCreatedBy(UserOtherCreateDTO createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -60,6 +64,13 @@ public class ActivitiesCreateDTO {
     }
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public List<MediaCreateDTO> getMedias() {
+        return medias;
+    }
+    public void setMedias(List<MediaCreateDTO> medias) {
+        this.medias = medias;
     }
 
     public StatusCreateDTO getStatus() {

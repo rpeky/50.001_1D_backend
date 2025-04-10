@@ -1,19 +1,21 @@
 package com.travelapp.api.activities.entity;
 
+import com.travelapp.api.activities.activitymedia.entity.Media;
 import com.travelapp.api.bookmarks.Bookmarks;
 import com.travelapp.api.comments.Comments;
-import com.travelapp.api.datedentity.DatedEntity;
+import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
+import com.travelapp.api.globalnonsense.datedentity.datedentitylistener.DatedEntityListener;
+import com.travelapp.api.itinerarydayactivity.daysactivity.entity.DayActivity;
 import com.travelapp.api.likes.Likes;
 import com.travelapp.api.status.entity.Status;
-import com.travelapp.api.trip.Trips;
 import com.travelapp.api.users.entity.Users;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,6 +27,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "activities")
+@EntityListeners(DatedEntityListener.class)
 public class Activities extends DatedEntity {
 
     @Id
@@ -55,6 +58,10 @@ public class Activities extends DatedEntity {
     @Column(name = "thumbnail")
     private String thumbnail;
 
+    @OneToMany(mappedBy = "activity", targetEntity = Media.class,
+            cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Media> medias;
+
     //owner of rel. with status (fk)
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "status", referencedColumnName = "status_id", nullable = false)
@@ -74,9 +81,9 @@ public class Activities extends DatedEntity {
     @OneToMany(mappedBy = "activity", targetEntity = Likes.class)
     private List<Likes> likes;
 
-    //bi-directional mapping (inverse rel.) with trip
-    @OneToMany(mappedBy = "activity", targetEntity = Trips.class)
-    private List<Trips> trips;
+    //bi-directional mapping (inverse rel.) with DaysActivity
+    @OneToMany(mappedBy = "activity", targetEntity = DayActivity.class)
+    private List<DayActivity> trips;
 
 
     //Constructor
@@ -86,8 +93,7 @@ public class Activities extends DatedEntity {
     //Full-Arg Constructor
     public Activities(Long activityId, String title, Users createdBy,
                       String description, String location, String locationLink,
-                      Double price, String thumbnail, Status status,
-                      LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                      Double price, String thumbnail, List<Media> medias, Status status) {
         this.activityId = activityId;
         this.title = title;
         this.createdBy = createdBy;
@@ -96,6 +102,7 @@ public class Activities extends DatedEntity {
         this.locationLink = locationLink;
         this.price = price;
         this.thumbnail = thumbnail;
+        this.medias = medias;
         this.status = status;
     }
 
@@ -164,6 +171,13 @@ public class Activities extends DatedEntity {
         this.thumbnail = thumbnail;
     }
 
+    public List<Media> getMedias() {
+        return medias;
+    }
+    public void setMedias(List<Media> media) {
+        this.medias = media;
+        this.medias.forEach(m -> m.setActivity(this));
+    }
 
     public Status getStatus() {
         return status;

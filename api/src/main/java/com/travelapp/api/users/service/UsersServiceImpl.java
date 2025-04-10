@@ -1,10 +1,10 @@
 package com.travelapp.api.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travelapp.api.mappers.mymappers.MyUsersUpdateMapper;
-import com.travelapp.api.status.entity.Status;
+import com.travelapp.api.globalnonsense.mappers.mymappers.MyUsersUpdateMapper;
 import com.travelapp.api.users.DTO.UsersCreateDTO;
-import com.travelapp.api.users.DTO.UsersReadDTO;
+import com.travelapp.api.users.DTO.UsersReadElseDTO;
+import com.travelapp.api.users.DTO.UsersReadSelfDTO;
 import com.travelapp.api.users.DTO.UsersUpdateDTO;
 import com.travelapp.api.users.entity.Users;
 import com.travelapp.api.users.repository.UsersRepository;
@@ -29,6 +29,10 @@ public class UsersServiceImpl implements UsersService{
     private ModelMapper defaultMapper;
 
     @Autowired
+    @Qualifier("userReadSelfMapper")
+    private ModelMapper userReadSelfMapper;
+
+    @Autowired
     private ObjectMapper jsonConverter;
 
 
@@ -36,22 +40,19 @@ public class UsersServiceImpl implements UsersService{
     private UsersRepository usersRepository;
 
     @Override
-    public UsersReadDTO createUser(UsersCreateDTO usersCreateDTO) {
+    public UsersReadSelfDTO createUser(UsersCreateDTO usersCreateDTO) {
         Users userToCreate = defaultMapper.map(usersCreateDTO, Users.class);
 
-        if (userToCreate.getStatus() == null) {
-            Status activeStatus = new Status();
-            activeStatus.setStatusName("ACTIVE");
-            activeStatus.setUser(userToCreate); // Maintain the bi-directional link
-            userToCreate.setStatus(activeStatus);
-        }
-
+        if (userToCreate.getStatus() != null) {
             Users userCreated = usersRepository.save(userToCreate);
-        return defaultMapper.map(userCreated, UsersReadDTO.class);
+            return defaultMapper.map(userCreated, UsersReadSelfDTO.class);
+        } else {
+            throw new IllegalArgumentException("Status Information is required for user creation");
+        }
     }
 
     @Override
-    public UsersReadDTO updateUser(UsersUpdateDTO usersUpdateDTO) throws EntityNotFoundException, IllegalArgumentException {
+    public UsersReadSelfDTO updateUser(UsersUpdateDTO usersUpdateDTO) throws EntityNotFoundException, IllegalArgumentException {
 
         if (usersUpdateDTO.getUserUid().isPresent()) {
             String userUid = usersUpdateDTO.getUserUid().get();
@@ -61,7 +62,7 @@ public class UsersServiceImpl implements UsersService{
             if (optionalExistingUser.isPresent()) {
                 Users userUpdated = MyUsersUpdateMapper
                         .usersUpdateMapper(jsonConverter, usersUpdateDTO, optionalExistingUser.get());
-                return defaultMapper.map(usersRepository.save(userUpdated), UsersReadDTO.class);
+                return defaultMapper.map(usersRepository.save(userUpdated), UsersReadSelfDTO.class);
 
             } else {
                 throw new EntityNotFoundException("User with UID: "
@@ -69,16 +70,28 @@ public class UsersServiceImpl implements UsersService{
             }
         }
         else {
-            throw new IllegalArgumentException("User UID is required for update.");
+            throw new IllegalArgumentException("User UID information is required for update.");
         }
 
     }
 
     @Override
-    public UsersReadDTO getUser(String userUid) throws EntityNotFoundException {
+    public UsersReadSelfDTO getUserSelf(String userUid) throws EntityNotFoundException {
         Optional<Users> optionalRetrievedUser = usersRepository.findByUserUid(userUid);
         if (optionalRetrievedUser.isPresent()){
-            return defaultMapper.map(optionalRetrievedUser.get(), UsersReadDTO.class);
+            return userReadSelfMapper.map(optionalRetrievedUser.get(), UsersReadSelfDTO.class);
+        }
+        else {
+            throw new EntityNotFoundException("User with UID: "
+                    + userUid + " not found.");
+        }
+    }
+
+    public UsersReadElseDTO getUserOther(String userUid) throws EntityNotFoundException {
+        Optional<Users> optionalRetrievedUser = usersRepository.findByUserUid(userUid);
+        if (optionalRetrievedUser.isPresent()){
+            UsersReadSelfDTO userRetrieved = userReadSelfMapper.map(optionalRetrievedUser.get(), UsersReadSelfDTO.class);
+            return defaultMapper.map(userRetrieved, UsersReadElseDTO.class);
         }
         else {
             throw new EntityNotFoundException("User with UID: "
@@ -87,11 +100,11 @@ public class UsersServiceImpl implements UsersService{
     }
 
     @Override
-    public List<UsersReadDTO> getAllUsers(){
+    public List<UsersReadSelfDTO> getAllUsers(){
         List<Users> allUsers = usersRepository.findAll();
-        List<UsersReadDTO> listUsersToShow = new ArrayList<>();
+        List<UsersReadSelfDTO> listUsersToShow = new ArrayList<>();
         for (Users user: allUsers) {
-            UsersReadDTO userToShow = defaultMapper.map(user, UsersReadDTO.class);
+            UsersReadSelfDTO userToShow = defaultMapper.map(user, UsersReadSelfDTO.class);
             listUsersToShow.add(userToShow);
         }
         return listUsersToShow;

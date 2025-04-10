@@ -1,13 +1,9 @@
 package com.travelapp.api.likes;
 
 import com.travelapp.api.activities.entity.Activities;
-import com.travelapp.api.itineraries.Itineraries;
+import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
+import com.travelapp.api.itineraries.entity.Itineraries;
 import com.travelapp.api.users.entity.Users;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,12 +12,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "likes")
-public class Likes {
+public class Likes extends DatedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,21 +30,13 @@ public class Likes {
 
     //owner of rel. with activity (fk)
     @ManyToOne
-    @JoinColumn(name = "fk_activity_id", referencedColumnName = "activity_id")
+    @JoinColumn(name = "fk_activity_id", referencedColumnName = "activity_id", nullable = true)
     private Activities activity;
 
     //owner of rel. with itinerary (fk)
-    @OneToOne
-    @JoinColumn(name = "fk_itinerary_id", referencedColumnName = "itinerary_id")
+    @ManyToOne
+    @JoinColumn(name = "fk_itinerary_id", referencedColumnName = "itinerary_id", nullable = true)
     private Itineraries itinerary;
-
-    @CreationTimestamp
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
 
 
     //Constructors
@@ -57,14 +44,11 @@ public class Likes {
     public Likes() {
     }
     // Full-Arg constructor
-    public Likes(Integer likeId, Users user, Activities activity, Itineraries itinerary,
-                 LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public Likes(Integer likeId, Users user, Activities activity, Itineraries itinerary) {
         this.likeId = likeId;
         this.user = user;
         this.activity = activity;
         this.itinerary = itinerary;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 
 
@@ -100,21 +84,6 @@ public class Likes {
         this.itinerary = itinerary;
     }
 
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
-    }
-    public void setModifiedAt(LocalDateTime modifiedAt) {
-        this.modifiedAt = modifiedAt;
-    }
 
 
 }
