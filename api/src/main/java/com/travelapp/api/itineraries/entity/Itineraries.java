@@ -1,9 +1,9 @@
 package com.travelapp.api.itineraries.entity;
 
-import com.travelapp.api.comments.Comments;
+import com.travelapp.api.comments.entity.Comments;
 import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
 import com.travelapp.api.globalnonsense.datedentity.datedentitylistener.DatedEntityListener;
-import com.travelapp.api.likes.Likes;
+import com.travelapp.api.likes.entity.Likes;
 import com.travelapp.api.status.entity.Status;
 import com.travelapp.api.itinerarydayactivity.itinerarydays.entity.ItineraryDay;
 import com.travelapp.api.users.entity.Users;

@@ -1,6 +1,6 @@
 package com.travelapp.api.comments.DTO;
 
-import com.travelapp.api.users.DTO.UserActivityReadDTO;
+import com.travelapp.api.users.DTO.UsersReadSelfDTO;
 import java.time.LocalDateTime;
 
 public class CommentsReadDTO {
@@ -8,7 +8,7 @@ public class CommentsReadDTO {
     private String comment;
     
     // Nested DTO from your users module for the creator’s basic info
-    private UserActivityReadDTO createdBy;
+    private UsersReadSelfDTO createdBy;
     
     // If this comment is attached to an activity or itinerary, include their IDs.
     private Long activityId;
@@ -33,10 +33,10 @@ public class CommentsReadDTO {
         this.comment = comment;
     }
     
-    public UserActivityReadDTO getCreatedBy() {
+    public UsersReadSelfDTO getCreatedBy() {
         return createdBy;
     }
-    public void setCreatedBy(UserActivityReadDTO createdBy) {
+    public void setCreatedBy(UsersReadSelfDTO createdBy) {
         this.createdBy = createdBy;
     }
     

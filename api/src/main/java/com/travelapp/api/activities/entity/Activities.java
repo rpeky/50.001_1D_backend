@@ -1,12 +1,12 @@
 package com.travelapp.api.activities.entity;
 
 import com.travelapp.api.activities.activitymedia.entity.Media;
-import com.travelapp.api.bookmarks.Bookmarks;
-import com.travelapp.api.comments.Comments;
+import com.travelapp.api.bookmarks.entity.Bookmarks;
+import com.travelapp.api.comments.entity.Comments;
 import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
 import com.travelapp.api.globalnonsense.datedentity.datedentitylistener.DatedEntityListener;
 import com.travelapp.api.itinerarydayactivity.daysactivity.entity.DayActivity;
-import com.travelapp.api.likes.Likes;
+import com.travelapp.api.likes.entity.Likes;
 import com.travelapp.api.status.entity.Status;
 import com.travelapp.api.users.entity.Users;
 

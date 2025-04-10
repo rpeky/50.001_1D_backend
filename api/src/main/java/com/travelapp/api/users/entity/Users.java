@@ -1,11 +1,11 @@
 package com.travelapp.api.users.entity;
 
 import com.travelapp.api.activities.entity.Activities;
-import com.travelapp.api.bookmarks.Bookmarks;
-import com.travelapp.api.comments.Comments;
+import com.travelapp.api.bookmarks.entity.Bookmarks;
+import com.travelapp.api.comments.entity.Comments;
 import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
 import com.travelapp.api.itineraries.entity.Itineraries;
-import com.travelapp.api.likes.Likes;
+import com.travelapp.api.likes.entity.Likes;
 import com.travelapp.api.status.entity.Status;
 
 import java.util.ArrayList;
