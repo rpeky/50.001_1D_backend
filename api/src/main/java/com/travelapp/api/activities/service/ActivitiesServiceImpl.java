@@ -129,6 +129,17 @@ public class ActivitiesServiceImpl implements ActivitiesService {
 
     }
 
+    public List<ActivitiesReadDTO> getAllActivities()
+            throws EntityNotFoundException {
+        List<Activities> allActivitiesList =  activitiesRepository.findAll();
+        List<ActivitiesReadDTO> lisToReturn = new ArrayList<>();
+        for (Activities activity : allActivitiesList){
+            ActivitiesReadDTO activityToAdd = defaultMapper.map(activity, ActivitiesReadDTO.class);
+            lisToReturn.add(activityToAdd);
+        }
+        return lisToReturn;
+    }
+
 
     @Transactional
     @Override

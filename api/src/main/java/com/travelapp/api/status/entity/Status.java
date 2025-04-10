@@ -30,13 +30,13 @@ public class Status extends DatedEntity {
 
 
     //Mapping
-    @OneToOne(mappedBy = "status")
+    @OneToOne(mappedBy = "status", targetEntity = Users.class, orphanRemoval = true)
     private Users user;
 
-    @OneToOne(mappedBy = "status")
+    @OneToOne(mappedBy = "status", targetEntity = Activities.class, orphanRemoval = true)
     private Activities activity;
 
-    @OneToOne(mappedBy = "status")
+    @OneToOne(mappedBy = "status", targetEntity = Itineraries.class, orphanRemoval = true)
     private Itineraries itinerary;
 
 

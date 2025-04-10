@@ -2,8 +2,8 @@ package com.travelapp.api.itineraries.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.activities.repository.ActivitiesRepository;
-import com.travelapp.api.globalnonsense.mappers.mymappers.MyItinerariesCreateMapper;
 import com.travelapp.api.itineraries.DTO.ItinerariesCreateDTO;
 import com.travelapp.api.itineraries.DTO.ItinerariesReadDTO;
 import com.travelapp.api.itineraries.DTO.ItinerariesUpdateDTO;
@@ -58,7 +58,8 @@ public class ItinerariesServiceImpl implements ItinerariesService {
             throw new EntityNotFoundException("Itinerary with ID: "
                     + itineraryId + " not found.");
         }
-    }
+    }  
+    
 
     @Override
     public List<ItinerariesReadDTO> getAllUserItineraries(String userUid)
@@ -75,6 +76,17 @@ public class ItinerariesServiceImpl implements ItinerariesService {
             throw new EntityNotFoundException("User with UID: "
                     + userUid + " not found.");
         }
+    }
+
+    public List<ItinerariesReadDTO> getAllItineraries()
+            throws EntityNotFoundException {
+        List<Itineraries> allItinerariesList =  itinerariesRepository.findAll();
+        List<ItinerariesReadDTO> listToReturn = new ArrayList<>();
+        for (Itineraries itinerary : allItinerariesList){
+            ItinerariesReadDTO itineraryToAdd = defaultMapper.map(itinerary, ItinerariesReadDTO.class);
+            listToReturn.add(itineraryToAdd);
+        }
+        return listToReturn;
     }
 
     @Override

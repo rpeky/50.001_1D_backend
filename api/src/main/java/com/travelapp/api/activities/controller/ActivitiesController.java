@@ -57,13 +57,20 @@ public class ActivitiesController {
     }
 
     @GetMapping("/{activityId}")
-    public ResponseEntity<ApiResponse<ActivitiesReadDTO>> getActivity(@PathVariable Long activityId) {
+    public ResponseEntity<ApiResponse<ActivitiesReadDTO>> getAllActivity(@PathVariable Long activityId) {
         ActivitiesReadDTO activityToShow = activitiesService.getActivity(activityId);
         ApiResponse<ActivitiesReadDTO> response = new ApiResponse<>(activityToShow);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userUid}")
+    @GetMapping("/load/all")
+    public ResponseEntity<ApiResponse<List<ActivitiesReadDTO>>> getAllActivity() {
+        List<ActivitiesReadDTO> activityListToShow = activitiesService.getAllActivities();
+        ApiResponse<List<ActivitiesReadDTO>> response = new ApiResponse<>(activityListToShow);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userUid}/all")
     public ResponseEntity<ApiResponse<List<ActivitiesReadDTO>>> getAllUserActivity(@PathVariable String userUid) {
         List<ActivitiesReadDTO> activitiesToShow = activitiesService.getAllUserActivities(userUid);
         ApiResponse<List<ActivitiesReadDTO>> response = new ApiResponse<>(activitiesToShow);

@@ -1,7 +1,6 @@
 package com.travelapp.api.itineraries.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travelapp.api.activities.DTO.ActivitiesReadDTO;
 import com.travelapp.api.itineraries.DTO.ItinerariesCreateDTO;
 import com.travelapp.api.itineraries.DTO.ItinerariesReadDTO;
 import com.travelapp.api.itineraries.DTO.ItinerariesUpdateDTO;
@@ -62,6 +61,13 @@ public class ItinerariesController {
     public ResponseEntity<ApiResponse<ItinerariesReadDTO>> getItinerary(@PathVariable Long itineraryId) {
         ItinerariesReadDTO itineraryToShow = itinerariesService.getItinerary(itineraryId);
         ApiResponse<ItinerariesReadDTO> response = new ApiResponse<>(itineraryToShow);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/load/all")
+    public ResponseEntity<ApiResponse<List<ItinerariesReadDTO>>> getAllItineraries() {
+        List<ItinerariesReadDTO> itineraryListToShow = itinerariesService.getAllItineraries();
+        ApiResponse<List<ItinerariesReadDTO>> response = new ApiResponse<>(itineraryListToShow);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
