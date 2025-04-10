@@ -60,10 +60,12 @@ public class Users extends DatedEntity {
     @PostLoad
     void filterAllItineraries(){
         for (Itineraries itinerary : allItineraries) {
-            if (itinerary.getStatus().getStatusName().equals("Published")) {
-                itineraries.add(itinerary);
-            } else {
-                myTrips.add(itinerary);
+            if (itinerary.getStatus() != null) {
+                if (itinerary.getStatus().getStatusName().equals("Published")) {
+                    itineraries.add(itinerary);
+                } else {
+                    myTrips.add(itinerary);
+                }
             }
         }
     }
