@@ -1,13 +1,13 @@
 package com.travelapp.api.AAshop.DTOs.cart;
 
 public class CartOtherReadDTO {
-    private Long cart_id;
+    private Long cartId;
 
-    public Long getCart_id() {
-        return cart_id;
+    public Long getCartId() {
+        return cartId;
     }
-    public void setCart_id(Long cart_id) {
-        this.cart_id = cart_id;
+    public void setCartId(Long cartId) {
+        this.cartId = cartId;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.travelapp.api.AAshop.entities;
 
+import com.travelapp.api.users.entity.Users;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityResult;
@@ -18,6 +20,10 @@ public class ProductReviews {
     private Long reviewId;
 
     @ManyToOne
+    @JoinColumn(name = "fk_created_by", referencedColumnName = "user_id", nullable = false)
+    private Users createdBy;
+
+    @ManyToOne
     @JoinColumn(name = "fk_prod_id", referencedColumnName = "product_id", nullable = false)
     private Products product;
 
@@ -28,10 +34,17 @@ public class ProductReviews {
     private String review;
 
     @Column(name = "verified_purchase")
-    private Boolean verifiedPurchase = true;
+    private Boolean verifiedPurchase = false;
 
     public Long getReviewId() { return reviewId; }
     public void setReviewId(Long reviewId) { this.reviewId = reviewId; }
+
+    public Users getCreatedBy() {
+        return createdBy;
+    }
+    public void setCreatedBy(Users createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public Products getProduct() { return product; }
     public void setProduct(Products product) { this.product = product; }

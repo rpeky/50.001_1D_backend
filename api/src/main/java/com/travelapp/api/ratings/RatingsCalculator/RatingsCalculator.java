@@ -1,5 +1,6 @@
 package com.travelapp.api.ratings.RatingsCalculator;
 
+import com.travelapp.api.AAshop.entities.ProductReviews;
 import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.ratings.entity.Ratings;
 
@@ -15,6 +16,16 @@ public class RatingsCalculator {
         }
         return 0.0;
     }
+    public static double computeAverageRatingReviews(List<ProductReviews> reviews) {
+        if (reviews != null && !reviews.isEmpty()) {
+            return reviews.stream()
+                    .mapToLong(ProductReviews::getRating)
+                    .average()
+                    .orElse(0.0);
+        }
+        return 0.0;
+    }
+
 
     public static double computeBayesianAverage(double activityAvg, long activityCount,
                                          double globalAvg, int minRatings) {
