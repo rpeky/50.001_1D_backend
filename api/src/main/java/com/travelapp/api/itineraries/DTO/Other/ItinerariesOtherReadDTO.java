@@ -2,6 +2,8 @@ package com.travelapp.api.itineraries.DTO.Other;
 
 import com.travelapp.api.status.DTO.external.StatusReadDTO;
 
+import java.time.LocalDateTime;
+
 
 public class ItinerariesOtherReadDTO {
 
@@ -10,6 +12,8 @@ public class ItinerariesOtherReadDTO {
     private String description;
     private String thumbnail;
     private StatusReadDTO status;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     public Long getItineraryId() {
         return itineraryId;
@@ -44,5 +48,19 @@ public class ItinerariesOtherReadDTO {
     }
     public void setStatus(StatusReadDTO status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getModifiedAt() {
+        return modifiedAt;
+    }
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }

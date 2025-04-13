@@ -2,7 +2,7 @@ package com.travelapp.api.activities.DTO;
 
 import com.travelapp.api.activities.activitymedia.DTO.MediaUpdateDTO;
 import com.travelapp.api.status.DTO.external.StatusUpdateDTO;
-import com.travelapp.api.users.DTO.other.UserOtherUpdateDTO;
+import com.travelapp.api.users.DTO.other.UsersOtherUpdateDTO;
 
 import org.openapitools.jackson.nullable.JsonNullable;
 
@@ -11,7 +11,7 @@ import java.util.List;
 public class ActivitiesUpdateDTO {
     private JsonNullable<Long> activityId = JsonNullable.undefined();
     private JsonNullable<String> title = JsonNullable.undefined();
-    private JsonNullable<UserOtherUpdateDTO> createdBy = JsonNullable.undefined();
+    private JsonNullable<UsersOtherUpdateDTO> createdBy = JsonNullable.undefined();
     private JsonNullable<String> description = JsonNullable.undefined();
     private JsonNullable<String> location = JsonNullable.undefined();
     private JsonNullable<String> locationLink = JsonNullable.undefined();
@@ -35,10 +35,10 @@ public class ActivitiesUpdateDTO {
         this.title = title;
     }
 
-    public JsonNullable<UserOtherUpdateDTO> getCreatedBy() {
+    public JsonNullable<UsersOtherUpdateDTO> getCreatedBy() {
         return createdBy;
     }
-    public void setCreatedBy(JsonNullable<UserOtherUpdateDTO> createdBy) {
+    public void setCreatedBy(JsonNullable<UsersOtherUpdateDTO> createdBy) {
         this.createdBy = createdBy;
     }
 

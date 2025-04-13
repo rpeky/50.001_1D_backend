@@ -8,6 +8,11 @@ import com.travelapp.api.users.DTO.UsersReadSelfDTO;
 import com.travelapp.api.users.DTO.UsersUpdateDTO;
 import com.travelapp.api.users.entity.Users;
 import com.travelapp.api.users.repository.UsersRepository;
+import com.travelapp.api.users.extrainfo.UserExtraInfo;
+import com.travelapp.api.users.extrainfo.UsersExtraInfoCalculation;
+import com.travelapp.api.users.userfollows.repository.UserFollowsRepository;
+import com.travelapp.api.users.usersettings.repository.UserSettingsRepository;
+import com.travelapp.api.users.usersettings.service.UserSettingsServiceImpl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +38,21 @@ public class UsersServiceImpl implements UsersService{
     private ModelMapper userReadSelfMapper;
 
     @Autowired
+    @Qualifier("strictModelMapper")
+    private ModelMapper strictMapper;
+
+    @Autowired
     private ObjectMapper jsonConverter;
 
 
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private UserFollowsRepository userFollowsRepository;
+    @Autowired
+    private UserSettingsServiceImpl userSettingsService;
+
+
 
     @Override
     public UsersReadSelfDTO createUser(UsersCreateDTO usersCreateDTO) {
@@ -45,11 +60,13 @@ public class UsersServiceImpl implements UsersService{
 
         if (userToCreate.getStatus() != null) {
             Users userCreated = usersRepository.save(userToCreate);
+            userSettingsService.createUserSettings(userCreated);
             return defaultMapper.map(userCreated, UsersReadSelfDTO.class);
         } else {
             throw new IllegalArgumentException("Status Information is required for user creation");
         }
     }
+
 
     @Override
     public UsersReadSelfDTO updateUser(UsersUpdateDTO usersUpdateDTO) throws EntityNotFoundException, IllegalArgumentException {
@@ -79,7 +96,20 @@ public class UsersServiceImpl implements UsersService{
     public UsersReadSelfDTO getUserSelf(String userUid) throws EntityNotFoundException {
         Optional<Users> optionalRetrievedUser = usersRepository.findByUserUid(userUid);
         if (optionalRetrievedUser.isPresent()){
-            return userReadSelfMapper.map(optionalRetrievedUser.get(), UsersReadSelfDTO.class);
+            Users retrievedUser = optionalRetrievedUser.get();
+
+            UserExtraInfo extraInfo =
+                    UsersExtraInfoCalculation.calculateUserExtraInfo(retrievedUser, userFollowsRepository, strictMapper);
+
+            UsersReadSelfDTO userRetrieved = userReadSelfMapper.map(optionalRetrievedUser.get(), UsersReadSelfDTO.class);
+
+            userRetrieved.setFollowerCount(extraInfo.getFollowerCount());
+            userRetrieved.setFollowingCount(extraInfo.getFollowingCount());
+            userRetrieved.setLikesCount(extraInfo.getLikesCount());
+            userRetrieved.setFollowerList(extraInfo.getFollowerList());
+            userRetrieved.setFollowingList(extraInfo.getFollowingList());
+
+            return userRetrieved;
         }
         else {
             throw new EntityNotFoundException("User with UID: "
@@ -90,8 +120,18 @@ public class UsersServiceImpl implements UsersService{
     public UsersReadElseDTO getUserOther(String userUid) throws EntityNotFoundException {
         Optional<Users> optionalRetrievedUser = usersRepository.findByUserUid(userUid);
         if (optionalRetrievedUser.isPresent()){
-            UsersReadSelfDTO userRetrieved = userReadSelfMapper.map(optionalRetrievedUser.get(), UsersReadSelfDTO.class);
-            return defaultMapper.map(userRetrieved, UsersReadElseDTO.class);
+            Users retrievedUser = optionalRetrievedUser.get();
+
+            UserExtraInfo extraInfo =
+                    UsersExtraInfoCalculation.calculateUserExtraInfo(retrievedUser, userFollowsRepository, strictMapper);
+
+            UsersReadElseDTO userRetrieved = userReadSelfMapper.map(optionalRetrievedUser.get(), UsersReadElseDTO.class);
+
+            userRetrieved.setFollowerCount(extraInfo.getFollowerCount());
+            userRetrieved.setFollowingCount(extraInfo.getFollowingCount());
+            userRetrieved.setLikesCount(extraInfo.getLikesCount());
+
+            return userRetrieved;
         }
         else {
             throw new EntityNotFoundException("User with UID: "

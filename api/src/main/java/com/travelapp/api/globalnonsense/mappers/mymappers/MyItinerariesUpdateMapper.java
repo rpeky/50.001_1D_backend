@@ -91,9 +91,6 @@ public class MyItinerariesUpdateMapper {
             itineraryToUpdate.setDescription(updateDTO.getDescription().orElse(null));
         }
 
-        if (updateJson.has("priceRange")) {
-            itineraryToUpdate.setPriceRange(updateDTO.getPriceRange().orElse(null));
-        }
 
         if (updateJson.has("thumbnail")) {
             itineraryToUpdate.setThumbnail(updateDTO.getThumbnail().orElse(null));

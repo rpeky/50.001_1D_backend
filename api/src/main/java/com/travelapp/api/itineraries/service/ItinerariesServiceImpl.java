@@ -2,7 +2,6 @@ package com.travelapp.api.itineraries.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.activities.repository.ActivitiesRepository;
 import com.travelapp.api.itineraries.DTO.ItinerariesCreateDTO;
 import com.travelapp.api.itineraries.DTO.ItinerariesReadDTO;
@@ -10,7 +9,8 @@ import com.travelapp.api.itineraries.DTO.ItinerariesUpdateDTO;
 import com.travelapp.api.itineraries.entity.Itineraries;
 import com.travelapp.api.itineraries.repository.ItinerariesRepository;
 import com.travelapp.api.globalnonsense.mappers.mymappers.MyItinerariesUpdateMapper;
-import com.travelapp.api.users.DTO.other.UserOtherCreateDTO;
+import com.travelapp.api.ratings.RatingsCalculator.RatingsCalculator;
+import com.travelapp.api.users.DTO.other.UsersOtherCreateDTO;
 import com.travelapp.api.users.entity.Users;
 import com.travelapp.api.users.repository.UsersRepository;
 
@@ -45,6 +45,10 @@ public class ItinerariesServiceImpl implements ItinerariesService {
     private ModelMapper defaultMapper;
 
     @Autowired
+    @Qualifier("strictModelMapper")
+    private ModelMapper strictMapper;
+
+    @Autowired
     private ObjectMapper jsonConverter;
 
     @Override
@@ -52,8 +56,13 @@ public class ItinerariesServiceImpl implements ItinerariesService {
             throws EntityNotFoundException {
         Optional<Itineraries> optionalExistingItinerary =  itinerariesRepository.findById(itineraryId);
         if (optionalExistingItinerary.isPresent()) {
-            Itineraries itineraryToShow = optionalExistingItinerary.get();
-            return defaultMapper.map(itineraryToShow, ItinerariesReadDTO.class);
+            Itineraries itineraryRetrieved = optionalExistingItinerary.get();
+            ItinerariesReadDTO itineraryToShow = strictMapper.map(itineraryRetrieved, ItinerariesReadDTO.class);
+
+            itineraryToShow.setRatings(RatingsCalculator.computeAverageRating(itineraryRetrieved.getRatingsList()));
+            itineraryToShow.setPriceRange(GetItineraryPriceRange.calculatePriceRange(itineraryRetrieved));
+
+            return itineraryToShow;
         } else {
             throw new EntityNotFoundException("Itinerary with ID: "
                     + itineraryId + " not found.");
@@ -68,10 +77,18 @@ public class ItinerariesServiceImpl implements ItinerariesService {
             List<Itineraries> userItineraries = itinerariesRepository.findByCreatedBy_UserUid(userUid);
             List<ItinerariesReadDTO> userItinerariesToShow = new ArrayList<>();
             for (Itineraries itinerary : userItineraries) {
-                ItinerariesReadDTO itineraryToShow = defaultMapper.map(itinerary, ItinerariesReadDTO.class);
+                ItinerariesReadDTO itineraryToShow = strictMapper.map(itinerary, ItinerariesReadDTO.class);
+
+                itineraryToShow.setRatings(RatingsCalculator.computeAverageRating(itinerary.getRatingsList()));
+                itineraryToShow.setPriceRange(GetItineraryPriceRange.calculatePriceRange(itinerary));
+
                 userItinerariesToShow.add(itineraryToShow);
             }
+
+            userItinerariesToShow.sort((i1, i2) -> i1.getModifiedAt().compareTo(i2.getModifiedAt()));
+
             return userItinerariesToShow;
+
         } else {
             throw new EntityNotFoundException("User with UID: "
                     + userUid + " not found.");
@@ -83,9 +100,16 @@ public class ItinerariesServiceImpl implements ItinerariesService {
         List<Itineraries> allItinerariesList =  itinerariesRepository.findAll();
         List<ItinerariesReadDTO> listToReturn = new ArrayList<>();
         for (Itineraries itinerary : allItinerariesList){
-            ItinerariesReadDTO itineraryToAdd = defaultMapper.map(itinerary, ItinerariesReadDTO.class);
+            ItinerariesReadDTO itineraryToAdd = strictMapper.map(itinerary, ItinerariesReadDTO.class);
+
+            itineraryToAdd.setRatings(RatingsCalculator.computeAverageRating(itinerary.getRatingsList()));
+            itineraryToAdd.setPriceRange(GetItineraryPriceRange.calculatePriceRange(itinerary));
+
             listToReturn.add(itineraryToAdd);
         }
+
+        listToReturn.sort((i1, i2) -> i1.getModifiedAt().compareTo(i2.getModifiedAt()));
+
         return listToReturn;
     }
 
@@ -100,22 +124,22 @@ public class ItinerariesServiceImpl implements ItinerariesService {
             throw new IllegalArgumentException("Status information is required for creation");
         }
 
-        UserOtherCreateDTO userOtherCreateDTO = itinerariesCreateDTO.getCreatedBy();
+        UsersOtherCreateDTO usersOtherCreateDTO = itinerariesCreateDTO.getCreatedBy();
 
-        if (userOtherCreateDTO != null && userOtherCreateDTO.getUserUid() != null) {
+        if (usersOtherCreateDTO != null && usersOtherCreateDTO.getUserUid() != null) {
 
-            Optional<Users> optionalItineraryUser = usersRepository.findByUserUid(userOtherCreateDTO.getUserUid());
+            Optional<Users> optionalItineraryUser = usersRepository.findByUserUid(usersOtherCreateDTO.getUserUid());
 
             if (optionalItineraryUser.isPresent()) {
                 Users itineraryUser = optionalItineraryUser.get();
                 itineraryToCreate.setCreatedBy(itineraryUser);
                 Itineraries itineraryCreated = itinerariesRepository.save(itineraryToCreate);
                 entityManager.refresh(itineraryCreated);
-                return defaultMapper.map(itineraryCreated, ItinerariesReadDTO.class);
+                return strictMapper.map(itineraryCreated, ItinerariesReadDTO.class);
             }
             else {
                 throw new EntityNotFoundException("User with UID: "
-                        + userOtherCreateDTO.getUserUid() + " not found.");
+                        + usersOtherCreateDTO.getUserUid() + " not found.");
             }
         }
         else {
@@ -141,7 +165,7 @@ public class ItinerariesServiceImpl implements ItinerariesService {
                 entityManager.flush();
                 entityManager.clear();
                 Itineraries itineraryToShow = itinerariesRepository.findById(itineraryToUpdateId).get();
-                return defaultMapper.map(itineraryToShow, ItinerariesReadDTO.class);
+                return strictMapper.map(itineraryToShow, ItinerariesReadDTO.class);
             }
             else {
                 throw new EntityNotFoundException("Itinerary with ID: "

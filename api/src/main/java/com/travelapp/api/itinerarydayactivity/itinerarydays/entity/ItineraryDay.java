@@ -1,6 +1,5 @@
 package com.travelapp.api.itinerarydayactivity.itinerarydays.entity;
 
-import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
 import com.travelapp.api.itineraries.entity.Itineraries;
 import com.travelapp.api.itinerarydayactivity.daysactivity.entity.DayActivity;
 

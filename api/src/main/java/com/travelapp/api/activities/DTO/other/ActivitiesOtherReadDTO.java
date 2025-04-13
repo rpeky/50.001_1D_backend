@@ -1,9 +1,13 @@
 package com.travelapp.api.activities.DTO.other;
 
+import java.time.LocalDateTime;
+
 public class ActivitiesOtherReadDTO {
     private Long activityId;
     private String title;
     private String thumbnail;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     public Long getActivityId() {
         return activityId;
@@ -24,5 +28,19 @@ public class ActivitiesOtherReadDTO {
     }
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getModifiedAt() {
+        return modifiedAt;
+    }
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }

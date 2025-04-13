@@ -7,9 +7,11 @@ import com.travelapp.api.activities.DTO.ActivitiesUpdateDTO;
 import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.activities.repository.ActivitiesRepository;
 import com.travelapp.api.globalnonsense.mappers.mymappers.MyActivitiesUpdateMapper;
-import com.travelapp.api.users.DTO.other.UserOtherCreateDTO;
+import com.travelapp.api.ratings.RatingsCalculator.RatingsCalculator;
+import com.travelapp.api.users.DTO.other.UsersOtherCreateDTO;
 import com.travelapp.api.users.entity.Users;
 import com.travelapp.api.users.repository.UsersRepository;
+import com.travelapp.api.users.userfollows.repository.UserFollowsRepository;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +32,16 @@ public class ActivitiesServiceImpl implements ActivitiesService {
     private ActivitiesRepository activitiesRepository;
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private UserFollowsRepository userFollowsRepository;
 
     @Autowired
     @Qualifier("defaultModelMapper")
     private ModelMapper defaultMapper;
+
+    @Autowired
+    @Qualifier("strictModelMapper")
+    private ModelMapper strictMapper;
 
 
     @Autowired
@@ -50,21 +58,21 @@ public class ActivitiesServiceImpl implements ActivitiesService {
             throw new IllegalArgumentException("Status information is required for creation");
         }
 
-        UserOtherCreateDTO userOtherCreateDTO = activitiesCreateDTO.getCreatedBy();
+        UsersOtherCreateDTO usersOtherCreateDTO = activitiesCreateDTO.getCreatedBy();
 
-        if (userOtherCreateDTO != null && userOtherCreateDTO.getUserUid() != null) {
+        if (usersOtherCreateDTO != null && usersOtherCreateDTO.getUserUid() != null) {
 
-            Optional<Users> optionalActivityUser = usersRepository.findByUserUid(userOtherCreateDTO.getUserUid());
+            Optional<Users> optionalActivityUser = usersRepository.findByUserUid(usersOtherCreateDTO.getUserUid());
 
             if (optionalActivityUser.isPresent()) {
                 Users activityUser = optionalActivityUser.get();
                 activityToCreate.setCreatedBy(activityUser);
                 Activities activityCreated = activitiesRepository.save(activityToCreate);
-                return defaultMapper.map(activityCreated, ActivitiesReadDTO.class);
+                return strictMapper.map(activityCreated, ActivitiesReadDTO.class);
             }
             else {
                 throw new EntityNotFoundException("User with UID: "
-                        + userOtherCreateDTO.getUserUid() + " not found.");
+                        + usersOtherCreateDTO.getUserUid() + " not found.");
             }
         }
         else {
@@ -85,7 +93,7 @@ public class ActivitiesServiceImpl implements ActivitiesService {
                 Activities activityToUpdate =  MyActivitiesUpdateMapper
                         .activityUpdateMapper(jsonConverter, activitiesUpdateDTO, optionalActivityToUpdate.get());
                 Activities activityUpdated = activitiesRepository.save(activityToUpdate);
-                return defaultMapper.map(activityUpdated, ActivitiesReadDTO.class);
+                return strictMapper.map(activityUpdated, ActivitiesReadDTO.class);
             }
             else {
                 throw new EntityNotFoundException("Activity with ID: "
@@ -103,8 +111,13 @@ public class ActivitiesServiceImpl implements ActivitiesService {
             throws EntityNotFoundException {
         Optional<Activities> optionalExistingActivity =  activitiesRepository.findById(activityId);
         if (optionalExistingActivity.isPresent()) {
-            Activities activityToShow = optionalExistingActivity.get();
-            return defaultMapper.map(activityToShow, ActivitiesReadDTO.class);
+            Activities activityRetrieved = optionalExistingActivity.get();
+
+            ActivitiesReadDTO activityToShow = strictMapper.map(activityRetrieved, ActivitiesReadDTO.class);
+            activityToShow.setRatings(RatingsCalculator.computeAverageRating(activityRetrieved.getRatingsList()));
+
+            return activityToShow;
+
         } else {
             throw new EntityNotFoundException("Activity with ID: "
                     + activityId + " not found.");
@@ -118,9 +131,15 @@ public class ActivitiesServiceImpl implements ActivitiesService {
             List<Activities> userActivities = activitiesRepository.findByCreatedBy_UserUid(userUid);
             List<ActivitiesReadDTO> userActivitiesToShow = new ArrayList<>();
             for (Activities activity : userActivities) {
-                ActivitiesReadDTO activityToShow = defaultMapper.map(activity, ActivitiesReadDTO.class);
+                ActivitiesReadDTO activityToShow = strictMapper.map(activity, ActivitiesReadDTO.class);
+
+                activityToShow.setRatings(RatingsCalculator.computeAverageRating(activity.getRatingsList()));
+
                 userActivitiesToShow.add(activityToShow);
             }
+
+            userActivitiesToShow.sort((a1, a2) -> a1.getCreatedAt().compareTo(a2.getCreatedAt()));
+
             return userActivitiesToShow;
         } else {
             throw new EntityNotFoundException("User with UID: "
@@ -132,12 +151,42 @@ public class ActivitiesServiceImpl implements ActivitiesService {
     public List<ActivitiesReadDTO> getAllActivities()
             throws EntityNotFoundException {
         List<Activities> allActivitiesList =  activitiesRepository.findAll();
-        List<ActivitiesReadDTO> lisToReturn = new ArrayList<>();
+        List<ActivitiesReadDTO> listToReturn = new ArrayList<>();
         for (Activities activity : allActivitiesList){
-            ActivitiesReadDTO activityToAdd = defaultMapper.map(activity, ActivitiesReadDTO.class);
-            lisToReturn.add(activityToAdd);
+            ActivitiesReadDTO activityToAdd = strictMapper.map(activity, ActivitiesReadDTO.class);
+
+            activityToAdd.setRatings(RatingsCalculator.computeAverageRating(activity.getRatingsList()));
+
+            listToReturn.add(activityToAdd);
         }
-        return lisToReturn;
+
+        listToReturn.sort((a1, a2) -> a2.getCreatedAt().compareTo(a1.getCreatedAt()));
+
+        return listToReturn;
+    }
+
+    public List<ActivitiesReadDTO> getFollowingActivitiesList(String userUid)
+        throws EntityNotFoundException {
+        Optional<Users> optionalUser = usersRepository.findByUserUid(userUid);
+        if (optionalUser.isPresent()) {
+            Users user = optionalUser.get();
+            List<Activities> allFollowingActivities = GetUserFollowingActivities
+                    .followingActivities(userFollowsRepository, activitiesRepository, user, strictMapper);
+
+            List<ActivitiesReadDTO> listToReturn = new ArrayList<>();
+            for (Activities activity : allFollowingActivities){
+                ActivitiesReadDTO activityToAdd = strictMapper.map(activity, ActivitiesReadDTO.class);
+
+                activityToAdd.setRatings(RatingsCalculator.computeAverageRating(activity.getRatingsList()));
+
+                listToReturn.add(activityToAdd);
+            }
+            return listToReturn;
+
+        } else {
+            throw new EntityNotFoundException("User with UID: "
+                    + userUid + " not found.");
+        }
     }
 
 

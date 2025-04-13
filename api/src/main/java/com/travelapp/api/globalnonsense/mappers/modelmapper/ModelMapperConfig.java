@@ -9,6 +9,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.ui.ModelMap;
 
 import java.util.stream.Collectors;
 
@@ -24,6 +25,16 @@ public class ModelMapperConfig {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
         return mapper;
+    }
+
+    @Bean("strictModelMapper")
+    public ModelMapper strictModelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setFieldMatchingEnabled(true)
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        return modelMapper;
     }
 
     @Bean("userReadSelfMapper")

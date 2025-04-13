@@ -1,7 +1,5 @@
 package com.travelapp.api.globalnonsense.mappers.mymappers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelapp.api.activities.DTO.other.ActivitiesOtherCUDTO;
 import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.activities.repository.ActivitiesRepository;
@@ -13,7 +11,7 @@ import com.travelapp.api.itinerarydayactivity.itinerarydays.DTO.ItineraryDayCUDT
 import com.travelapp.api.itinerarydayactivity.itinerarydays.entity.ItineraryDay;
 import com.travelapp.api.status.DTO.external.StatusCreateDTO;
 import com.travelapp.api.status.entity.Status;
-import com.travelapp.api.users.DTO.other.UserOtherCreateDTO;
+import com.travelapp.api.users.DTO.other.UsersOtherCreateDTO;
 import com.travelapp.api.users.entity.Users;
 import com.travelapp.api.users.repository.UsersRepository;
 
@@ -34,18 +32,18 @@ public class MyItinerariesCreateMapper {
         }
 
         if (createDTO.getCreatedBy() != null) {
-            UserOtherCreateDTO userOtherCreateDTO = createDTO.getCreatedBy();
+            UsersOtherCreateDTO usersOtherCreateDTO = createDTO.getCreatedBy();
 
-            if (userOtherCreateDTO != null && userOtherCreateDTO.getUserUid() != null) {
+            if (usersOtherCreateDTO != null && usersOtherCreateDTO.getUserUid() != null) {
 
-                Optional<Users> optionalItineraryUser = usersRepository.findByUserUid(userOtherCreateDTO.getUserUid());
+                Optional<Users> optionalItineraryUser = usersRepository.findByUserUid(usersOtherCreateDTO.getUserUid());
 
                 if (optionalItineraryUser.isPresent()) {
                     Users itineraryUser = optionalItineraryUser.get();
                     itineraryToCreate.setCreatedBy(itineraryUser);
                 } else {
                     throw new EntityNotFoundException("User with UID: "
-                            + userOtherCreateDTO.getUserUid() + " not found.");
+                            + usersOtherCreateDTO.getUserUid() + " not found.");
                 }
             }
         } else {
@@ -53,7 +51,6 @@ public class MyItinerariesCreateMapper {
         }
 
         itineraryToCreate.setDescription(createDTO.getDescription());
-        itineraryToCreate.setPriceRange(createDTO.getPriceRange());
 
 
         if (createDTO.getTimeline() != null) {

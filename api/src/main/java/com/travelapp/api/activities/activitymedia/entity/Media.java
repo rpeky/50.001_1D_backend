@@ -1,7 +1,7 @@
 package com.travelapp.api.activities.activitymedia.entity;
 
 import com.travelapp.api.activities.entity.Activities;
-import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
+import com.travelapp.api.globalnonsense.datedentityandothers.DatedEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

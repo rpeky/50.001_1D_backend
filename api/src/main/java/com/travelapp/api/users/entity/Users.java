@@ -1,12 +1,13 @@
 package com.travelapp.api.users.entity;
 
 import com.travelapp.api.activities.entity.Activities;
-import com.travelapp.api.bookmarks.Bookmarks;
-import com.travelapp.api.comments.Comments;
-import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
+import com.travelapp.api.bookmarks.entity.Bookmarks;
+import com.travelapp.api.comments.entity.Comments;
+import com.travelapp.api.globalnonsense.datedentityandothers.DatedEntity;
 import com.travelapp.api.itineraries.entity.Itineraries;
-import com.travelapp.api.likes.Likes;
+import com.travelapp.api.likes.entity.Likes;
 import com.travelapp.api.status.entity.Status;
+import com.travelapp.api.users.userfollows.entity.UserFollows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +46,10 @@ public class Users extends DatedEntity {
     @Column(name = "bio")
     private String bio;
 
-    @OneToMany(mappedBy = "createdBy", targetEntity = Activities.class, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy", targetEntity = Activities.class, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Activities> activities;
 
-    @OneToMany(mappedBy = "createdBy", targetEntity = Itineraries.class, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy", targetEntity = Itineraries.class, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Itineraries> allItineraries;
 
     @Transient
@@ -57,8 +58,20 @@ public class Users extends DatedEntity {
     @Transient
     private List<Itineraries> itineraries = new ArrayList<>();
 
+    @OneToMany(mappedBy = "createdBy", targetEntity = Bookmarks.class, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Bookmarks> bookmarks;
+
+    @Transient
+    private Long activitiesCount;
+
     @PostLoad
-    void filterAllItineraries(){
+    void postLoadFunction(){
+        if (activities != null) {
+            this.activitiesCount = (long) activities.size();
+        } else {
+            this.activitiesCount = 0L;
+        }
+
         for (Itineraries itinerary : allItineraries) {
             if (itinerary.getStatus() != null) {
                 if (itinerary.getStatus().getStatusName().equals("Published")) {
@@ -76,19 +89,21 @@ public class Users extends DatedEntity {
     private Status status;
 
 
+    //bi-directional mapping (inverse rel.) with follower to get following list
+    @OneToMany(mappedBy = "follower", targetEntity = UserFollows.class, orphanRemoval = true)
+    private List<UserFollows> followingList;
+
+    //bi-directional mapping (inverse rel.) with following to get follower list
+    @OneToMany(mappedBy = "following", targetEntity = UserFollows.class, orphanRemoval = true)
+    private List<UserFollows> followerList;
+
     //bi-directional mapping (inverse rel.) with comments
-    @OneToMany(mappedBy = "createdBy")
+    @OneToMany(mappedBy = "createdBy", targetEntity = Comments.class, orphanRemoval = true)
     private List<Comments> Comments;
 
-    //bi-directional mapping (inverse rel.) with bookmarks
-    @OneToMany(mappedBy = "createdBy")
-    private List<Bookmarks> bookmarks;
-
     //bi-directional mapping (inverse rel.) with likes
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "createdBy", targetEntity = Likes.class, orphanRemoval = true)
     private List<Likes> likes;
-
-
 
     //Constructor
     //No-Arg Constructor
@@ -170,7 +185,6 @@ public class Users extends DatedEntity {
     public List<Itineraries> getMyTrips() {
         return myTrips;
     }
-
     public void setMyTrips(List<Itineraries> myTrips) {
         this.myTrips = myTrips;
     }
@@ -178,9 +192,36 @@ public class Users extends DatedEntity {
     public List<Itineraries> getItineraries() {
         return itineraries;
     }
-
     public void setItineraries(List<Itineraries> itineraries) {
         this.itineraries = itineraries;
+    }
+
+    public List<Bookmarks> getBookmarks() {
+        return bookmarks;
+    }
+    public void setBookmarks(List<Bookmarks> bookmarks) {
+        this.bookmarks = bookmarks;
+    }
+
+    public Long getActivitiesCount() {
+        return activitiesCount;
+    }
+    public void setActivitiesCount(Long activitiesCount) {
+        this.activitiesCount = activitiesCount;
+    }
+
+    public List<UserFollows> getFollowingList() {
+        return followingList;
+    }
+    public void setFollowingList(List<UserFollows> followingList) {
+        this.followingList = followingList;
+    }
+
+    public List<UserFollows> getFollowerList() {
+        return followerList;
+    }
+    public void setFollowerList(List<UserFollows> followerList) {
+        this.followerList = followerList;
     }
 
     public Status getStatus() {
@@ -192,6 +233,7 @@ public class Users extends DatedEntity {
             status.setUser(this);
         }
     }
+
 
 
 

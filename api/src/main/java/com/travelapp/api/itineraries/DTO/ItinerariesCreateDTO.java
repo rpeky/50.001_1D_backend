@@ -2,13 +2,13 @@ package com.travelapp.api.itineraries.DTO;
 
 import com.travelapp.api.itinerarydayactivity.itinerarydays.DTO.ItineraryDayCUDTO;
 import com.travelapp.api.status.DTO.external.StatusCreateDTO;
-import com.travelapp.api.users.DTO.other.UserOtherCreateDTO;
+import com.travelapp.api.users.DTO.other.UsersOtherCreateDTO;
 
 import java.util.List;
 
 public class ItinerariesCreateDTO {
     private String title;
-    private UserOtherCreateDTO createdBy;
+    private UsersOtherCreateDTO createdBy;
     private String description;
     private Double priceRange;
     private List<ItineraryDayCUDTO> timeline;
@@ -23,10 +23,10 @@ public class ItinerariesCreateDTO {
         this.title = title;
     }
 
-    public UserOtherCreateDTO getCreatedBy() {
+    public UsersOtherCreateDTO getCreatedBy() {
         return createdBy;
     }
-    public void setCreatedBy(UserOtherCreateDTO createdBy) {
+    public void setCreatedBy(UsersOtherCreateDTO createdBy) {
         this.createdBy = createdBy;
     }
 

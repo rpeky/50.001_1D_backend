@@ -1,12 +1,13 @@
 package com.travelapp.api.activities.entity;
 
 import com.travelapp.api.activities.activitymedia.entity.Media;
-import com.travelapp.api.bookmarks.Bookmarks;
-import com.travelapp.api.comments.Comments;
-import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
-import com.travelapp.api.globalnonsense.datedentity.datedentitylistener.DatedEntityListener;
+import com.travelapp.api.bookmarks.entity.Bookmarks;
+import com.travelapp.api.comments.entity.Comments;
+import com.travelapp.api.globalnonsense.datedentityandothers.DatedEntity;
+import com.travelapp.api.globalnonsense.datedentityandothers.datedentitylistener.DatedEntityListener;
 import com.travelapp.api.itinerarydayactivity.daysactivity.entity.DayActivity;
-import com.travelapp.api.likes.Likes;
+import com.travelapp.api.likes.entity.Likes;
+import com.travelapp.api.ratings.entity.Ratings;
 import com.travelapp.api.status.entity.Status;
 import com.travelapp.api.users.entity.Users;
 
@@ -16,6 +17,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,7 +25,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "activities")
@@ -62,29 +66,43 @@ public class Activities extends DatedEntity {
             cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Media> medias;
 
+    @Transient
+    private Long likes;
+
+    @PostLoad
+    void calculateLikes() {
+        if (likesList != null) {
+            this.likes = (long) likesList.size();
+        } else {
+            this.likes = 0L;
+        }
+    }
+
+    //bi-directional mapping (inverse rel.) with comments
+    @OneToMany(mappedBy = "activity", targetEntity = Comments.class, orphanRemoval = true)
+    private List<Comments> comments;
+
     //owner of rel. with status (fk)
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "status", referencedColumnName = "status_id", nullable = false)
     private Status status;
 
 
     //Mapping
-    //bi-directional mapping (inverse rel.) with comments
-    @OneToMany(mappedBy = "activity", targetEntity = Comments.class)
-    private List<Comments> comments;
 
     //bi-directional mapping (inverse rel.) with bookmarks
-    @OneToOne(mappedBy = "activity", targetEntity = Bookmarks.class)
-    private Bookmarks bookmark;
-
-    //bi-directional mapping (inverse rel.) with likes
-    @OneToMany(mappedBy = "activity", targetEntity = Likes.class)
-    private List<Likes> likes;
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Bookmarks> bookmarks;
 
     //bi-directional mapping (inverse rel.) with DaysActivity
     @OneToMany(mappedBy = "activity", targetEntity = DayActivity.class)
-    private List<DayActivity> trips;
+    private List<DayActivity> days;
 
+    @OneToMany(mappedBy = "activity", targetEntity = Likes.class, orphanRemoval = true)
+    private List<Likes> likesList;
+
+    @OneToMany(mappedBy = "activity", targetEntity = Ratings.class, orphanRemoval = true)
+    private List<Ratings> ratingsList;
 
     //Constructor
     //No-Arg Constructor
@@ -178,6 +196,35 @@ public class Activities extends DatedEntity {
         this.medias = media;
         this.medias.forEach(m -> m.setActivity(this));
     }
+
+    public Long getLikes() {
+        return likes;
+    }
+    public void setLikes(Long likes) {
+        this.likes = likes;
+    }
+
+    public List<Likes> getLikesList() {
+        return likesList;
+    }
+    public void setLikesList(List<Likes> likesList) {
+        this.likesList = likesList;
+    }
+
+    public List<Comments> getComments() {
+        return comments;
+    }
+    public void setComments(List<Comments> comments) {
+        this.comments = comments;
+    }
+
+    public List<Ratings> getRatingsList() {
+        return ratingsList;
+    }
+    public void setRatingsList(List<Ratings> ratingsList) {
+        this.ratingsList = ratingsList;
+    }
+
 
     public Status getStatus() {
         return status;

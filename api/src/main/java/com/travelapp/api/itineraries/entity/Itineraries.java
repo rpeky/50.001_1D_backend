@@ -1,14 +1,13 @@
 package com.travelapp.api.itineraries.entity;
 
-import com.travelapp.api.comments.Comments;
-import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
-import com.travelapp.api.globalnonsense.datedentity.datedentitylistener.DatedEntityListener;
-import com.travelapp.api.likes.Likes;
+import com.travelapp.api.comments.entity.Comments;
+import com.travelapp.api.globalnonsense.datedentityandothers.DatedEntity;
+import com.travelapp.api.globalnonsense.datedentityandothers.datedentitylistener.DatedEntityListener;
+import com.travelapp.api.likes.entity.Likes;
+import com.travelapp.api.ratings.entity.Ratings;
 import com.travelapp.api.status.entity.Status;
 import com.travelapp.api.itinerarydayactivity.itinerarydays.entity.ItineraryDay;
 import com.travelapp.api.users.entity.Users;
-
-import org.hibernate.annotations.Formula;
 
 import java.util.List;
 
@@ -49,18 +48,24 @@ public class Itineraries extends DatedEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "price_range")
-    private Double priceRange;
+    @Transient
+    private Long likes;
 
     @Transient
     private Long duration;
 
     @PostLoad
-    private void calculateDuration() {
+    private void calculateEverything() {
         if (timeline != null) {
             this.duration = (long) timeline.size();
         } else {
             this.duration = 0L;
+        }
+
+        if (likesList != null) {
+            this.likes = (long) likesList.size();
+        } else {
+            this.likes = 0L;
         }
     }
 
@@ -74,6 +79,10 @@ public class Itineraries extends DatedEntity {
     @Column(name = "coverPhoto")
     private String coverPhoto;
 
+    //bi-directional mapping (inverse rel.) with comments
+    @OneToMany(mappedBy = "itinerary", targetEntity = Comments.class, orphanRemoval = true)
+    private List<Comments> comments;
+
     //owner of rel. with status (fk)
     @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "status", referencedColumnName = "status_id", nullable = false)
@@ -81,34 +90,37 @@ public class Itineraries extends DatedEntity {
 
 
     //Mapping
-    //bi-directional mapping (inverse rel.) with comments
-    @OneToMany(mappedBy = "itinerary")
-    private List<Comments> comments;
-
     //bi-directional mapping (inverse rel.) with likes
-    @OneToMany(mappedBy = "itinerary", targetEntity = Likes.class)
-    private List<Likes> likes;
+    @OneToMany(mappedBy = "itinerary", targetEntity = Likes.class, orphanRemoval = true)
+    private List<Likes> likesList;
+
+    @OneToMany(mappedBy = "itinerary", targetEntity = Ratings.class, orphanRemoval = true)
+    private List<Ratings> ratingsList;
 
 
     //Constructor
     //No-Arg Constructor
     public Itineraries() {
     }
-    //Full-Arg Constructor
+
     public Itineraries(Long itineraryId, String title, Users createdBy,
-                       String description, Double priceRange, Long duration,
+                       String description, Long likes, Long duration,
                        List<ItineraryDay> timeline, String thumbnail,
-                       String coverPhoto, Status status) {
+                       String coverPhoto, List<Comments> comments,
+                       Status status, List<Likes> likesList, List<Ratings> ratingsList) {
         this.itineraryId = itineraryId;
         this.title = title;
         this.createdBy = createdBy;
         this.description = description;
-        this.priceRange = priceRange;
+        this.likes = likes;
         this.duration = duration;
         this.timeline = timeline;
         this.thumbnail = thumbnail;
         this.coverPhoto = coverPhoto;
+        this.comments = comments;
         this.status = status;
+        this.likesList = likesList;
+        this.ratingsList = ratingsList;
     }
 
     //Getters and Setter
@@ -140,11 +152,25 @@ public class Itineraries extends DatedEntity {
         this.description = description;
     }
 
-    public Double getPriceRange() {
-        return priceRange;
+    public Long getLikes() {
+        return likes;
     }
-    public void setPriceRange(Double priceRange) {
-        this.priceRange = priceRange;
+    public void setLikes(Long likes) {
+        this.likes = likes;
+    }
+
+    public List<Likes> getLikesList() {
+        return likesList;
+    }
+    public void setLikesList(List<Likes> likesList) {
+        this.likesList = likesList;
+    }
+
+    public List<Ratings> getRatingsList() {
+        return ratingsList;
+    }
+    public void setRatingsList(List<Ratings> ratingsList) {
+        this.ratingsList = ratingsList;
     }
 
     public Long getDuration() {
@@ -160,6 +186,13 @@ public class Itineraries extends DatedEntity {
     public void setTimeline(List<ItineraryDay> timeline) {
         this.timeline = timeline;
         this.timeline.forEach(itineraryDay -> itineraryDay.setItinerary(this));
+    }
+
+    public List<Comments> getComments() {
+        return comments;
+    }
+    public void setComments(List<Comments> comments) {
+        this.comments = comments;
     }
 
     public String getThumbnail() {

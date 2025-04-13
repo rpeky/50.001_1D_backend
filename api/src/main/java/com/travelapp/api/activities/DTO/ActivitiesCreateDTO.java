@@ -2,13 +2,13 @@ package com.travelapp.api.activities.DTO;
 
 import com.travelapp.api.activities.activitymedia.DTO.MediaCreateDTO;
 import com.travelapp.api.status.DTO.external.StatusCreateDTO;
-import com.travelapp.api.users.DTO.other.UserOtherCreateDTO;
+import com.travelapp.api.users.DTO.other.UsersOtherCreateDTO;
 
 import java.util.List;
 
 public class ActivitiesCreateDTO {
     private String title;
-    private UserOtherCreateDTO createdBy;
+    private UsersOtherCreateDTO createdBy;
     private String description;
     private String location;
     private String locationLink;
@@ -24,10 +24,10 @@ public class ActivitiesCreateDTO {
         this.title = title;
     }
 
-    public UserOtherCreateDTO getCreatedBy() {
+    public UsersOtherCreateDTO getCreatedBy() {
         return createdBy;
     }
-    public void setCreatedBy(UserOtherCreateDTO createdBy) {
+    public void setCreatedBy(UsersOtherCreateDTO createdBy) {
         this.createdBy = createdBy;
     }
 

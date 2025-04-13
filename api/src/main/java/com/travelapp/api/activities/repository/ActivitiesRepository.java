@@ -9,6 +9,5 @@ import java.util.Optional;
 
 public interface ActivitiesRepository extends JpaRepository<Activities, Long> {
     List<Activities> findByCreatedBy_UserUid(String userUid);
-    Optional<Activities> findByCreatedBy_UserUidAndActivityId(String userUid, Long activityId);
-    void deleteByCreatedBy_UserUidAndActivityId(String userUid, Long activityId);
+    boolean existsByActivityId(Long activityId);
 }

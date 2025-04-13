@@ -1,7 +1,6 @@
 package com.travelapp.api.itinerarydayactivity.daysactivity.entity;
 
 import com.travelapp.api.activities.entity.Activities;
-import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
 import com.travelapp.api.itinerarydayactivity.itinerarydays.entity.ItineraryDay;
 
 import jakarta.persistence.Column;

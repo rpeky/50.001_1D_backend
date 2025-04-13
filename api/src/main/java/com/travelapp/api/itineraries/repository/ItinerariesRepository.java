@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface ItinerariesRepository extends JpaRepository<Itineraries, Long> {
     List<Itineraries> findByCreatedBy_UserUid(String userUid);
+    boolean existsByItineraryId(Long itineraryId);
 }

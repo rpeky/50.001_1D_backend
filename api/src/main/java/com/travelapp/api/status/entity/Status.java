@@ -1,8 +1,8 @@
 package com.travelapp.api.status.entity;
 
 import com.travelapp.api.activities.entity.Activities;
-import com.travelapp.api.globalnonsense.datedentity.DatedEntity;
-import com.travelapp.api.globalnonsense.datedentity.datedentitylistener.DatedEntityListener;
+import com.travelapp.api.globalnonsense.datedentityandothers.DatedEntity;
+import com.travelapp.api.globalnonsense.datedentityandothers.datedentitylistener.DatedEntityListener;
 import com.travelapp.api.itineraries.entity.Itineraries;
 import com.travelapp.api.users.entity.Users;
 
@@ -30,13 +30,13 @@ public class Status extends DatedEntity {
 
 
     //Mapping
-    @OneToOne(mappedBy = "status", targetEntity = Users.class, orphanRemoval = true)
+    @OneToOne(mappedBy = "status", targetEntity = Users.class)
     private Users user;
 
-    @OneToOne(mappedBy = "status", targetEntity = Activities.class, orphanRemoval = true)
+    @OneToOne(mappedBy = "status", targetEntity = Activities.class)
     private Activities activity;
 
-    @OneToOne(mappedBy = "status", targetEntity = Itineraries.class, orphanRemoval = true)
+    @OneToOne(mappedBy = "status", targetEntity = Itineraries.class)
     private Itineraries itinerary;
 
 
