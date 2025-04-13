@@ -30,6 +30,13 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItems> cartItems;
 
+    public Cart() {
+    }
+
+    public Cart(Users user) {
+        this.user = user;
+    }
+
     public Long getCartId() { return cartId; }
     public void setCartId(Long cartId) { this.cartId = cartId; }
 

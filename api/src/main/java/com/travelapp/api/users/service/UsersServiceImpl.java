@@ -1,6 +1,7 @@
 package com.travelapp.api.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.travelapp.api.AAshop.shopservice.ShopService;
 import com.travelapp.api.globalnonsense.mappers.mymappers.MyUsersUpdateMapper;
 import com.travelapp.api.users.DTO.UsersCreateDTO;
 import com.travelapp.api.users.DTO.UsersReadElseDTO;
@@ -51,6 +52,8 @@ public class UsersServiceImpl implements UsersService{
     private UserFollowsRepository userFollowsRepository;
     @Autowired
     private UserSettingsServiceImpl userSettingsService;
+    @Autowired
+    private ShopService shopService;
 
 
 
@@ -61,6 +64,7 @@ public class UsersServiceImpl implements UsersService{
         if (userToCreate.getStatus() != null) {
             Users userCreated = usersRepository.save(userToCreate);
             userSettingsService.createUserSettings(userCreated);
+            shopService.createCart(userCreated);
             return defaultMapper.map(userCreated, UsersReadSelfDTO.class);
         } else {
             throw new IllegalArgumentException("Status Information is required for user creation");
