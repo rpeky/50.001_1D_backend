@@ -1,7 +1,6 @@
 package com.travelapp.api.ratings.RatingsCalculator;
 
-import com.travelapp.api.AAshop.entities.ProductReviews;
-import com.travelapp.api.activities.entity.Activities;
+import com.travelapp.api.shop.entities.ProductReviews;
 import com.travelapp.api.ratings.entity.Ratings;
 
 import java.util.List;

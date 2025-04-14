@@ -53,7 +53,7 @@ public class StatusController {
         return new ResponseEntity<>(statusCreated, HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<StatusReadDTOInternal> updateStatus(@RequestBody StatusUpdateDTOInternal statusUpdateDTOInternal){
         try {
             StatusReadDTOInternal statusUpdated = statusService.updateStatus(statusUpdateDTOInternal);
