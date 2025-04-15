@@ -10,6 +10,8 @@ import com.travelapp.api.itineraries.entity.Itineraries;
 import com.travelapp.api.itineraries.repository.ItinerariesRepository;
 import com.travelapp.api.globalnonsense.mappers.mymappers.MyItinerariesUpdateMapper;
 import com.travelapp.api.ratings.RatingsCalculator.RatingsCalculator;
+import com.travelapp.api.ratings.entity.Ratings;
+import com.travelapp.api.ratings.repository.RatingsRepository;
 import com.travelapp.api.users.DTO.other.UsersOtherCreateDTO;
 import com.travelapp.api.users.entity.Users;
 import com.travelapp.api.users.repository.UsersRepository;
@@ -36,6 +38,8 @@ public class ItinerariesServiceImpl implements ItinerariesService {
     private UsersRepository usersRepository;
     @Autowired
     private ActivitiesRepository activitiesRepository;
+    @Autowired
+    private RatingsRepository ratingsRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -59,7 +63,10 @@ public class ItinerariesServiceImpl implements ItinerariesService {
             Itineraries itineraryRetrieved = optionalExistingItinerary.get();
             ItinerariesReadDTO itineraryToShow = strictMapper.map(itineraryRetrieved, ItinerariesReadDTO.class);
 
-            itineraryToShow.setRatings(RatingsCalculator.computeAverageRating(itineraryRetrieved.getRatingsList()));
+            List<Ratings> allItineraryRatings = ratingsRepository.findAllWhereActivityIsNull();
+
+            itineraryToShow.setRatings(RatingsCalculator
+                    .computeBayesianAverageActItin(itineraryRetrieved.getRatingsList(), allItineraryRatings, 10));
             itineraryToShow.setPriceRange(GetItineraryPriceRange.calculatePriceRange(itineraryRetrieved));
 
             return itineraryToShow;

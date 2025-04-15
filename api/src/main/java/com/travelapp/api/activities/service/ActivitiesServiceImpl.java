@@ -8,6 +8,8 @@ import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.activities.repository.ActivitiesRepository;
 import com.travelapp.api.globalnonsense.mappers.mymappers.MyActivitiesUpdateMapper;
 import com.travelapp.api.ratings.RatingsCalculator.RatingsCalculator;
+import com.travelapp.api.ratings.entity.Ratings;
+import com.travelapp.api.ratings.repository.RatingsRepository;
 import com.travelapp.api.users.DTO.other.UsersOtherCreateDTO;
 import com.travelapp.api.users.entity.Users;
 import com.travelapp.api.users.repository.UsersRepository;
@@ -34,6 +36,8 @@ public class ActivitiesServiceImpl implements ActivitiesService {
     private UsersRepository usersRepository;
     @Autowired
     private UserFollowsRepository userFollowsRepository;
+    @Autowired
+    private RatingsRepository ratingsRepository;
 
     @Autowired
     @Qualifier("defaultModelMapper")
@@ -114,7 +118,11 @@ public class ActivitiesServiceImpl implements ActivitiesService {
             Activities activityRetrieved = optionalExistingActivity.get();
 
             ActivitiesReadDTO activityToShow = strictMapper.map(activityRetrieved, ActivitiesReadDTO.class);
-            activityToShow.setRatings(RatingsCalculator.computeAverageRating(activityRetrieved.getRatingsList()));
+
+            List<Ratings> allRatingsList = ratingsRepository.findAllWhereItineraryIsNull();
+
+            activityToShow.setRatings(RatingsCalculator
+                    .computeBayesianAverageActItin(activityRetrieved.getRatingsList(), allRatingsList, 10));
 
             return activityToShow;
 

@@ -1,5 +1,6 @@
 package com.travelapp.api.users.controller;
 
+import com.travelapp.api.AAsecurity.DTO.UsersLoginConfirmationDTO;
 import com.travelapp.api.bookmarks.DTO.BookmarksCreateDTO;
 import com.travelapp.api.bookmarks.DTO.BookmarksReadDTO;
 import com.travelapp.api.bookmarks.service.BookmarksServiceImpl;
@@ -41,6 +42,12 @@ public class UsersController {
     @Autowired
     private UserSettingsServiceImpl userSettingsService;
 
+    @PostMapping
+    public ResponseEntity<ApiResponse<Void>> createUser(@RequestBody ApiRequest<UsersCreateDTO> request) {
+        usersService.createUser(request.getData());
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @GetMapping("/me/{userUid}")
     public ResponseEntity<ApiResponse<UsersReadSelfDTO>> getUserSelfByUid(@PathVariable String userUid) {
         UsersReadSelfDTO userToShow = usersService.getUserSelf(userUid);
@@ -55,14 +62,7 @@ public class UsersController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<UsersReadSelfDTO>> createUser(@RequestBody ApiRequest<UsersCreateDTO> request) {
-        UsersReadSelfDTO userCreated = usersService.createUser(request.getData());
-        ApiResponse<UsersReadSelfDTO> response = new ApiResponse<>(userCreated);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<ApiResponse<UsersReadSelfDTO>> updateUser(@RequestBody ApiRequest<UsersUpdateDTO> request) {
         UsersReadSelfDTO updatedUser = usersService.updateUser(request.getData());
         ApiResponse<UsersReadSelfDTO> response = new ApiResponse<>(updatedUser);
@@ -111,7 +111,7 @@ public class UsersController {
     }
 
 
-    @PutMapping("/settings")
+    @PutMapping("/settings/update")
     public ResponseEntity<ApiResponse<UserSettingsReadDTO>> updateSettings(@RequestBody ApiRequest<UserSettingsUpdateDTO> request) {
         UserSettingsUpdateDTO updateDTO = request.getData();
         UserSettingsReadDTO userSettingsReadDTO = userSettingsService.updateUserSettings(updateDTO);

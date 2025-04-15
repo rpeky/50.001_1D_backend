@@ -64,7 +64,7 @@ public class ActivitiesController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<ApiResponse<ActivitiesReadDTO>> updateActivity
             (@RequestBody ApiRequest<ActivitiesUpdateDTO> request) {
         ActivitiesUpdateDTO activitiesUpdateDTO = request.getData();
