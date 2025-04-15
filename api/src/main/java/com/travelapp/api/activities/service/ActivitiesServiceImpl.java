@@ -10,6 +10,8 @@ import com.travelapp.api.globalnonsense.mappers.mymappers.MyActivitiesUpdateMapp
 import com.travelapp.api.ratings.RatingsCalculator.RatingsCalculator;
 import com.travelapp.api.ratings.entity.Ratings;
 import com.travelapp.api.ratings.repository.RatingsRepository;
+import com.travelapp.api.status.DTO.external.StatusCreateDTO;
+import com.travelapp.api.status.repository.StatusRepository;
 import com.travelapp.api.users.DTO.other.UsersOtherCreateDTO;
 import com.travelapp.api.users.entity.Users;
 import com.travelapp.api.users.repository.UsersRepository;
@@ -38,6 +40,8 @@ public class ActivitiesServiceImpl implements ActivitiesService {
     private UserFollowsRepository userFollowsRepository;
     @Autowired
     private RatingsRepository ratingsRepository;
+    @Autowired
+    private StatusRepository statusRepository;
 
     @Autowired
     @Qualifier("defaultModelMapper")
@@ -55,12 +59,16 @@ public class ActivitiesServiceImpl implements ActivitiesService {
     public ActivitiesReadDTO createActivity(ActivitiesCreateDTO activitiesCreateDTO)
             throws EntityNotFoundException, IllegalArgumentException {
 
-        Activities activityToCreate = defaultMapper.map(activitiesCreateDTO, Activities.class);
-
-        // Set default status if none is provided
-        if (activityToCreate.getStatus() == null) {
+        if (activitiesCreateDTO.getStatus() == null) {
             throw new IllegalArgumentException("Status information is required for creation");
         }
+        StatusCreateDTO statusCreateDTO = activitiesCreateDTO.getStatus();
+        if (statusCreateDTO.getStatusId() == null) {
+            statusCreateDTO.setStatusId(0L);
+            activitiesCreateDTO.setStatus(statusCreateDTO);
+        }
+
+        Activities activityToCreate = defaultMapper.map(activitiesCreateDTO, Activities.class);
 
         UsersOtherCreateDTO usersOtherCreateDTO = activitiesCreateDTO.getCreatedBy();
 
@@ -95,7 +103,7 @@ public class ActivitiesServiceImpl implements ActivitiesService {
 
             if (optionalActivityToUpdate.isPresent()) {
                 Activities activityToUpdate =  MyActivitiesUpdateMapper
-                        .activityUpdateMapper(jsonConverter, activitiesUpdateDTO, optionalActivityToUpdate.get());
+                        .activityUpdateMapper(jsonConverter, activitiesUpdateDTO, optionalActivityToUpdate.get(), statusRepository);
                 Activities activityUpdated = activitiesRepository.save(activityToUpdate);
                 return strictMapper.map(activityUpdated, ActivitiesReadDTO.class);
             }

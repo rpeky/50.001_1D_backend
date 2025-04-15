@@ -8,14 +8,17 @@ import com.travelapp.api.activities.activitymedia.entity.Media;
 import com.travelapp.api.activities.entity.Activities;
 import com.travelapp.api.status.DTO.external.StatusUpdateDTO;
 import com.travelapp.api.status.entity.Status;
+import com.travelapp.api.status.repository.StatusRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import jakarta.persistence.EntityNotFoundException;
 
 public class MyActivitiesUpdateMapper {
 
     public static Activities activityUpdateMapper(ObjectMapper jsonConverter, ActivitiesUpdateDTO updateDTO,
-                                                  Activities activityToUpdate) {
+                                                  Activities activityToUpdate, StatusRepository statusRepository) {
         JsonNode updateJson = jsonConverter.convertValue(updateDTO, JsonNode.class);
 
         if (updateJson.has("title")) {
@@ -69,8 +72,26 @@ public class MyActivitiesUpdateMapper {
         if (updateJson.has("status")) {
             Status statusToUpdate = activityToUpdate.getStatus();
             StatusUpdateDTO statusUpdateDTO = updateDTO.getStatus().orElse(null);
-            statusToUpdate.setStatusName(statusUpdateDTO.getStatusName().orElse(null));
+            statusToUpdate.setStatusId(statusUpdateDTO.getStatusId().orElse(null));
             activityToUpdate.setStatus(statusToUpdate);
+        }
+
+        if (updateJson.has("status")) {
+
+            StatusUpdateDTO statusUpdateDTO = updateDTO.getStatus().orElse(null);
+
+            if (!statusUpdateDTO.getStatusId().isPresent()){
+                throw new IllegalArgumentException("StatusID information required for update.");
+            }
+
+            Optional<Status> optionalStatus = statusRepository.findById(statusUpdateDTO.getStatusId().get());
+
+            if (optionalStatus.isEmpty()) {
+                throw new EntityNotFoundException("Status with ID " + statusUpdateDTO.getStatusId().get() + " not found");
+            }
+
+            Status statusToChangeTo = optionalStatus.get();
+            activityToUpdate.setStatus(statusToChangeTo);
         }
 
         return activityToUpdate;

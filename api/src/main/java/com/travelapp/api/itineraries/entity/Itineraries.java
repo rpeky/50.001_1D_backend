@@ -214,9 +214,6 @@ public class Itineraries extends DatedEntity {
     }
     public void setStatus(Status status) {
         this.status = status;
-        if (status != null && status.getItinerary() != this) {
-            status.setItinerary(this);
-        }
     }
 
 

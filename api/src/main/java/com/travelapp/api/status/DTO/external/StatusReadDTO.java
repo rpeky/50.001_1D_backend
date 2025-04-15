@@ -3,13 +3,22 @@ package com.travelapp.api.status.DTO.external;
 import java.time.LocalDateTime;
 
 public class StatusReadDTO {
-    private String statusName;
+    private Long statusId;
+    private Long statusName;
 
+    public Long getStatusId() {
+        return statusId;
+    }
 
-    public String getStatusName() {
+    public void setStatusId(Long statusId) {
+        this.statusId = statusId;
+    }
+
+    public Long getStatusName() {
         return statusName;
     }
-    public void setStatusName(String statusName) {
+
+    public void setStatusName(Long statusName) {
         this.statusName = statusName;
     }
 }

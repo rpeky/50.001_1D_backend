@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelapp.api.AAsecurity.DTO.UsersLoginConfirmationDTO;
 import com.travelapp.api.shop.service.ShopService;
 import com.travelapp.api.globalnonsense.mappers.mymappers.MyUsersUpdateMapper;
+import com.travelapp.api.status.DTO.external.StatusCreateDTO;
 import com.travelapp.api.users.DTO.UsersCreateDTO;
 import com.travelapp.api.users.DTO.UsersReadElseDTO;
 import com.travelapp.api.users.DTO.UsersReadSelfDTO;
@@ -59,6 +60,13 @@ public class UsersServiceImpl implements UsersService{
 
     @Override
     public void createUser(UsersCreateDTO usersCreateDTO) {
+
+        StatusCreateDTO statusCreateDTO = usersCreateDTO.getStatus();
+
+        if (statusCreateDTO.getStatusId() == null) {
+            statusCreateDTO.setStatusId(0L);
+        }
+
         Users userToCreate = defaultMapper.map(usersCreateDTO, Users.class);
 
         if (userToCreate.getStatus() != null) {

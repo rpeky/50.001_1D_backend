@@ -1,14 +1,13 @@
 package com.travelapp.api.status.DTO.external;
 
 public class StatusCreateDTO {
-    private String statusName;
+    private Long statusId;
 
-
-    public String getStatusName() {
-        return statusName;
+    public Long getStatusId() {
+        return statusId;
     }
 
-    public void setStatusName(String statusName) {
-        this.statusName = statusName;
+    public void setStatusId(Long statusId) {
+        this.statusId = statusId;
     }
 }

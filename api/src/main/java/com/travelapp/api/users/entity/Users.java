@@ -19,6 +19,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PostLoad;
@@ -84,7 +85,7 @@ public class Users extends DatedEntity {
     }
 
     //owner of rel. with status (fk)
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "status", referencedColumnName = "status_id", nullable = false)
     private Status status;
 
@@ -229,9 +230,6 @@ public class Users extends DatedEntity {
     }
     public void setStatus(Status status) {
         this.status = status;
-        if (status != null && status.getUser() != this) {
-            status.setUser(this);
-        }
     }
 
 

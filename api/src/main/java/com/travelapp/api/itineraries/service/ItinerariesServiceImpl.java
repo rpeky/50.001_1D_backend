@@ -12,6 +12,8 @@ import com.travelapp.api.globalnonsense.mappers.mymappers.MyItinerariesUpdateMap
 import com.travelapp.api.ratings.RatingsCalculator.RatingsCalculator;
 import com.travelapp.api.ratings.entity.Ratings;
 import com.travelapp.api.ratings.repository.RatingsRepository;
+import com.travelapp.api.status.DTO.external.StatusCreateDTO;
+import com.travelapp.api.status.repository.StatusRepository;
 import com.travelapp.api.users.DTO.other.UsersOtherCreateDTO;
 import com.travelapp.api.users.entity.Users;
 import com.travelapp.api.users.repository.UsersRepository;
@@ -40,6 +42,8 @@ public class ItinerariesServiceImpl implements ItinerariesService {
     private ActivitiesRepository activitiesRepository;
     @Autowired
     private RatingsRepository ratingsRepository;
+    @Autowired
+    private StatusRepository statusRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -125,11 +129,16 @@ public class ItinerariesServiceImpl implements ItinerariesService {
     public ItinerariesReadDTO createItinerary(ItinerariesCreateDTO itinerariesCreateDTO)
             throws EntityNotFoundException, IllegalArgumentException {
 
-        Itineraries itineraryToCreate = defaultMapper.map(itinerariesCreateDTO, Itineraries.class);
-
-        if (itineraryToCreate.getStatus() == null) {
+        if (itinerariesCreateDTO.getStatus() == null) {
             throw new IllegalArgumentException("Status information is required for creation");
         }
+        StatusCreateDTO statusCreateDTO = itinerariesCreateDTO.getStatus();
+        if (statusCreateDTO.getStatusId() == null) {
+            statusCreateDTO.setStatusId(0L);
+            itinerariesCreateDTO.setStatus(statusCreateDTO);
+        }
+
+        Itineraries itineraryToCreate = defaultMapper.map(itinerariesCreateDTO, Itineraries.class);
 
         UsersOtherCreateDTO usersOtherCreateDTO = itinerariesCreateDTO.getCreatedBy();
 
@@ -167,7 +176,7 @@ public class ItinerariesServiceImpl implements ItinerariesService {
             if (optionalItineraryToUpdate.isPresent()) {
                 Itineraries itineraryToUpdate =  MyItinerariesUpdateMapper
                         .itineraryUpdateMapper(jsonConverter, itinerariesUpdateDTO,
-                                optionalItineraryToUpdate.get(), activitiesRepository);
+                                optionalItineraryToUpdate.get(), activitiesRepository, statusRepository);
                 Itineraries itineraryUpdated = itinerariesRepository.save(itineraryToUpdate);
                 entityManager.flush();
                 entityManager.clear();
