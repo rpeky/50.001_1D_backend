@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class StatusReadDTO {
     private Long statusId;
-    private Long statusName;
+    private String statusName;
 
     public Long getStatusId() {
         return statusId;
@@ -14,11 +14,11 @@ public class StatusReadDTO {
         this.statusId = statusId;
     }
 
-    public Long getStatusName() {
+    public String getStatusName() {
         return statusName;
     }
 
-    public void setStatusName(Long statusName) {
+    public void setStatusName(String statusName) {
         this.statusName = statusName;
     }
 }
