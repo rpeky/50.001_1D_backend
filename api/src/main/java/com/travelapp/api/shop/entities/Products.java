@@ -28,6 +28,9 @@ public class Products {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "image")
+    private String image;
+
     @Column(name = "stock")
     private Long stock;
 
@@ -55,6 +58,13 @@ public class Products {
     }
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getImage() {
+        return image;
+    }
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Long getPurchaseCount() {

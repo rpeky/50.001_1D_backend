@@ -6,6 +6,7 @@ public class ProductsOtherReadDTO {
     private String type;
     private String name;
     private Double price;
+    private String image;
 
     public Long getProductId() {
         return productId;
@@ -33,5 +34,12 @@ public class ProductsOtherReadDTO {
     }
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getImage() {
+        return image;
+    }
+    public void setImage(String image) {
+        this.image = image;
     }
 }

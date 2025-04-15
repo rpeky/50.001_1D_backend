@@ -49,7 +49,7 @@ public class ShopController {
         return new ResponseEntity<>(new ApiResponse<>(product), HttpStatus.OK);
     }
 
-    @DeleteMapping("/products/{productId}")
+    @DeleteMapping("/products/delete/{productId}")
     public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long productId) {
         shopService.deleteProduct(productId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -74,7 +74,7 @@ public class ShopController {
         return new ResponseEntity<>(new ApiResponse<>(review), HttpStatus.OK);
     }
 
-    @DeleteMapping("/reviews/{reviewId}")
+    @DeleteMapping("/reviews/delete/{reviewId}")
     public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId) {
         shopService.deleteReview(reviewId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -100,7 +100,7 @@ public class ShopController {
         return new ResponseEntity<>(new ApiResponse<>(updated), HttpStatus.OK);
     }
 
-    @DeleteMapping("/cartitems/{cartItemId}")
+    @DeleteMapping("/cartitems/delete/{cartItemId}")
     public ResponseEntity<ApiResponse<Void>> deleteCartItem(@PathVariable Long cartItemId) {
         shopService.deleteCartItem(cartItemId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

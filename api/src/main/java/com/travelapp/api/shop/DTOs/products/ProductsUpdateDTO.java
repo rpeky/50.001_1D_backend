@@ -7,6 +7,7 @@ public class ProductsUpdateDTO {
     private JsonNullable<String> name = JsonNullable.undefined();
     private JsonNullable<String> type = JsonNullable.undefined();
     private JsonNullable<Double> price = JsonNullable.undefined();
+    private JsonNullable<String> image = JsonNullable.undefined();
     private JsonNullable<Long> stock = JsonNullable.undefined();
 
     public JsonNullable<Long> getProductId() {
@@ -35,6 +36,13 @@ public class ProductsUpdateDTO {
     }
     public void setPrice(JsonNullable<Double> price) {
         this.price = price;
+    }
+
+    public JsonNullable<String> getImage() {
+        return image;
+    }
+    public void setImage(JsonNullable<String> image) {
+        this.image = image;
     }
 
     public JsonNullable<Long> getStock() {

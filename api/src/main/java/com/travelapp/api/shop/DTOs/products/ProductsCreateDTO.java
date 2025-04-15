@@ -5,6 +5,7 @@ public class ProductsCreateDTO {
     private String type;
     private String name;
     private Double price;
+    private String image;
     private Long stock;
 
 
@@ -19,6 +20,13 @@ public class ProductsCreateDTO {
     }
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getImage() {
+        return image;
+    }
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Long getStock() { return stock; }

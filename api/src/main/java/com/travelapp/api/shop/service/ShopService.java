@@ -99,6 +99,9 @@ public class ShopService {
                 if (updateDTO.getPrice().isPresent()) {
                     productToUpdate.setPrice(updateDTO.getPrice().get());
                 }
+                if (updateDTO.getImage().isPresent()){
+                    productToUpdate.setImage(updateDTO.getImage().get());
+                }
                 if (updateDTO.getStock().isPresent()) {
                     productToUpdate.setStock(updateDTO.getStock().get());
                 }
@@ -122,16 +125,18 @@ public class ShopService {
         dto.setName(product.getName());
         dto.setType(product.getType());
         dto.setPrice(product.getPrice());
+        dto.setImage(product.getImage());
         dto.setStock(product.getStock());
         dto.setPurchaseCount(product.getPurchaseCount());
 
         // compute average rating
-        List<ProductReviews> reviews = product.getReviews();
-        dto.setRating(RatingsCalculator.computeAverageRatingReviews(reviews));
+        List<ProductReviews> productReviewsList = product.getReviews();
+        List<ProductReviews> allProductReviewsList = reviewsRepository.findAll();
+        dto.setRating(RatingsCalculator.computeBayesianAverageProducts(productReviewsList, allProductReviewsList, 10));
 
-        // map reviews
-        if (reviews != null && !reviews.isEmpty()) {
-            List<ProductReviewsOtherReadDTO> reviewDTOs = reviews.stream().map(review -> {
+        // map productReviewsList
+        if (productReviewsList != null && !productReviewsList.isEmpty()) {
+            List<ProductReviewsOtherReadDTO> reviewDTOs = productReviewsList.stream().map(review -> {
                 ProductReviewsOtherReadDTO reviewDTO = new ProductReviewsOtherReadDTO();
                 reviewDTO.setReviewId(review.getReviewId());
                 reviewDTO.setRating(review.getRating());
@@ -336,6 +341,7 @@ public class ShopService {
         productReadDTO.setName(fullProduct.getName());
         productReadDTO.setType(fullProduct.getType());
         productReadDTO.setPrice(fullProduct.getPrice());
+        productReadDTO.setImage(fullProduct.getImage());
 
         CartOtherReadDTO cartReadDTO = new CartOtherReadDTO();
         cartReadDTO.setCartId(fullCart.getCartId());

@@ -9,6 +9,7 @@ public class ProductsReadDTO {
     private String name;
     private String type;
     private Double price;
+    private String image;
     private Double rating;
     private Long stock;
     private Long purchaseCount;
@@ -41,6 +42,13 @@ public class ProductsReadDTO {
     }
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getImage() {
+        return image;
+    }
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Double getRating() {
