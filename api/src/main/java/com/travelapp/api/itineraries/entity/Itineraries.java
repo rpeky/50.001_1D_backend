@@ -84,7 +84,7 @@ public class Itineraries extends DatedEntity {
     private List<Comments> comments;
 
     //owner of rel. with status (fk)
-    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "status", referencedColumnName = "status_id", nullable = false)
     private Status status;
 
