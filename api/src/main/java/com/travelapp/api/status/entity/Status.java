@@ -6,12 +6,16 @@ import com.travelapp.api.globalnonsense.datedentityandothers.datedentitylistener
 import com.travelapp.api.itineraries.entity.Itineraries;
 import com.travelapp.api.users.entity.Users;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -30,14 +34,14 @@ public class Status extends DatedEntity {
 
 
     //Mapping
-    @OneToOne(mappedBy = "status", targetEntity = Users.class)
-    private Users user;
+    @OneToMany(mappedBy = "status", targetEntity = Users.class)
+    private List<Users> users;
 
-    @OneToOne(mappedBy = "status", targetEntity = Activities.class)
-    private Activities activity;
+    @OneToMany(mappedBy = "status", targetEntity = Activities.class)
+    private List<Activities> activities;
 
-    @OneToOne(mappedBy = "status", targetEntity = Itineraries.class)
-    private Itineraries itinerary;
+    @OneToMany(mappedBy = "status", targetEntity = Itineraries.class)
+    private List<Itineraries> itineraries;
 
 
     //Constructors
@@ -66,24 +70,24 @@ public class Status extends DatedEntity {
         this.statusName = statusName;
     }
 
-    public Users getUser() {
-        return user;
+    public List<Users> getUsers() {
+        return users;
     }
-    public void setUser(Users user) {
-        this.user = user;
-    }
-
-    public Activities getActivity() {
-        return activity;
-    }
-    public void setActivity(Activities activity) {
-        this.activity = activity;
+    public void setUsers(List<Users> users) {
+        this.users = users;
     }
 
-    public Itineraries getItinerary() {
-        return itinerary;
+    public List<Activities> getActivities() {
+        return activities;
     }
-    public void setItinerary(Itineraries itinerary) {
-        this.itinerary = itinerary;
+    public void setActivities(List<Activities> activities) {
+        this.activities = activities;
+    }
+
+    public List<Itineraries> getItineraries() {
+        return itineraries;
+    }
+    public void setItineraries(List<Itineraries> itineraries) {
+        this.itineraries = itineraries;
     }
 }

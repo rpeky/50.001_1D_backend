@@ -65,7 +65,7 @@ public class ItinerariesController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<ApiResponse<ItinerariesReadDTO>> updateItinerary
             (@RequestBody ApiRequest<ItinerariesUpdateDTO> request) {
         ItinerariesUpdateDTO itinerariesUpdateDTO = request.getData();

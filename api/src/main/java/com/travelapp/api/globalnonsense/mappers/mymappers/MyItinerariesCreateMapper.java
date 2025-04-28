@@ -135,8 +135,8 @@ public class MyItinerariesCreateMapper {
         if (createDTO.getStatus() != null) {
             Status statusToCreate = new Status();
             StatusCreateDTO statusCreateDTO = createDTO.getStatus();
-            if (statusCreateDTO.getStatusName() != null) {
-                statusToCreate.setStatusName(statusCreateDTO.getStatusName());
+            if (statusCreateDTO.getStatusId() != null) {
+                statusToCreate.setStatusId(statusCreateDTO.getStatusId());
                 itineraryToCreate.setStatus(statusToCreate);
             } else {
                 throw new IllegalArgumentException("StatusName is required for creation");

@@ -13,6 +13,7 @@ import com.travelapp.api.itinerarydayactivity.itinerarydays.DTO.ItineraryDayCUDT
 import com.travelapp.api.itinerarydayactivity.itinerarydays.entity.ItineraryDay;
 import com.travelapp.api.status.DTO.external.StatusUpdateDTO;
 import com.travelapp.api.status.entity.Status;
+import com.travelapp.api.status.repository.StatusRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,8 @@ import jakarta.persistence.EntityNotFoundException;
 public class MyItinerariesUpdateMapper {
     public static Itineraries itineraryUpdateMapper(ObjectMapper jsonConverter, ItinerariesUpdateDTO updateDTO,
                                                     Itineraries itineraryToUpdate,
-                                                    ActivitiesRepository activitiesRepository) {
+                                                    ActivitiesRepository activitiesRepository,
+                                                    StatusRepository statusRepository) {
         JsonNode updateJson = jsonConverter.convertValue(updateDTO, JsonNode.class);
 
         if (updateJson.has("timeline")) {
@@ -101,10 +103,21 @@ public class MyItinerariesUpdateMapper {
         }
 
         if (updateJson.has("status")) {
-            Status statusToUpdate = itineraryToUpdate.getStatus();
+
             StatusUpdateDTO statusUpdateDTO = updateDTO.getStatus().orElse(null);
-            statusToUpdate.setStatusName(statusUpdateDTO.getStatusName().orElse(null));
-            itineraryToUpdate.setStatus(statusToUpdate);
+
+            if (!statusUpdateDTO.getStatusId().isPresent()){
+                throw new IllegalArgumentException("StatusID information required for update.");
+            }
+
+            Optional<Status> optionalStatus = statusRepository.findById(statusUpdateDTO.getStatusId().get());
+
+            if (optionalStatus.isEmpty()) {
+                throw new EntityNotFoundException("Status with ID " + statusUpdateDTO.getStatusId().get() + " not found");
+            }
+
+            Status statusToChangeTo = optionalStatus.get();
+            itineraryToUpdate.setStatus(statusToChangeTo);
         }
 
         return itineraryToUpdate;

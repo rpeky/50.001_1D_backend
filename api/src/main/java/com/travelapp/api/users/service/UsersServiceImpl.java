@@ -1,8 +1,10 @@
 package com.travelapp.api.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travelapp.api.AAshop.shopservice.ShopService;
+import com.travelapp.api.AAsecurity.DTO.UsersLoginConfirmationDTO;
+import com.travelapp.api.shop.service.ShopService;
 import com.travelapp.api.globalnonsense.mappers.mymappers.MyUsersUpdateMapper;
+import com.travelapp.api.status.DTO.external.StatusCreateDTO;
 import com.travelapp.api.users.DTO.UsersCreateDTO;
 import com.travelapp.api.users.DTO.UsersReadElseDTO;
 import com.travelapp.api.users.DTO.UsersReadSelfDTO;
@@ -12,7 +14,6 @@ import com.travelapp.api.users.repository.UsersRepository;
 import com.travelapp.api.users.extrainfo.UserExtraInfo;
 import com.travelapp.api.users.extrainfo.UsersExtraInfoCalculation;
 import com.travelapp.api.users.userfollows.repository.UserFollowsRepository;
-import com.travelapp.api.users.usersettings.repository.UserSettingsRepository;
 import com.travelapp.api.users.usersettings.service.UserSettingsServiceImpl;
 
 import org.modelmapper.ModelMapper;
@@ -58,14 +59,20 @@ public class UsersServiceImpl implements UsersService{
 
 
     @Override
-    public UsersReadSelfDTO createUser(UsersCreateDTO usersCreateDTO) {
+    public void createUser(UsersCreateDTO usersCreateDTO) {
+
+        StatusCreateDTO statusCreateDTO = usersCreateDTO.getStatus();
+
+        if (statusCreateDTO.getStatusId() == null) {
+            statusCreateDTO.setStatusId(0L);
+        }
+
         Users userToCreate = defaultMapper.map(usersCreateDTO, Users.class);
 
         if (userToCreate.getStatus() != null) {
             Users userCreated = usersRepository.save(userToCreate);
             userSettingsService.createUserSettings(userCreated);
             shopService.createCart(userCreated);
-            return defaultMapper.map(userCreated, UsersReadSelfDTO.class);
         } else {
             throw new IllegalArgumentException("Status Information is required for user creation");
         }

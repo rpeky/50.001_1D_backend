@@ -3,13 +3,13 @@ package com.travelapp.api.status.DTO.external;
 import org.openapitools.jackson.nullable.JsonNullable;
 
 public class StatusUpdateDTO {
-    private JsonNullable<String> statusName;
+    private JsonNullable<Long> statusId;
 
-    public JsonNullable<String> getStatusName() {
-        return statusName;
+    public JsonNullable<Long> getStatusId() {
+        return statusId;
     }
-    public void setStatusName(JsonNullable<String> statusName) {
-        this.statusName = statusName;
+    public void setStatusId(JsonNullable<Long> statusId) {
+        this.statusId = statusId;
     }
 
 }

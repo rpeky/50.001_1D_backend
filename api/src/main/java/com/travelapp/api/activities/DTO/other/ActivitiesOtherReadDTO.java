@@ -1,5 +1,7 @@
 package com.travelapp.api.activities.DTO.other;
 
+import com.travelapp.api.status.DTO.external.StatusReadDTO;
+
 import java.time.LocalDateTime;
 
 public class ActivitiesOtherReadDTO {
@@ -7,6 +9,7 @@ public class ActivitiesOtherReadDTO {
     private String title;
     private String thumbnail;
     private LocalDateTime createdAt;
+    private StatusReadDTO status;
     private LocalDateTime modifiedAt;
 
     public Long getActivityId() {
